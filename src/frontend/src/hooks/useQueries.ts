@@ -241,3 +241,45 @@ export function useSeedData() {
     },
   });
 }
+
+export function useAddCallbackRequest() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async (data: {
+      name: string;
+      phone: string;
+      city: string;
+      interest: string;
+    }) => {
+      if (!actor) throw new Error("No actor");
+      await actor.addCallbackRequest(
+        data.name,
+        data.phone,
+        data.city,
+        data.interest,
+      );
+    },
+  });
+}
+
+export function useAddConversionInquiry() {
+  const { actor } = useActor();
+  return useMutation({
+    mutationFn: async (data: {
+      name: string;
+      phone: string;
+      bike_model: string;
+      location: string;
+      petrol_expense: string;
+    }) => {
+      if (!actor) throw new Error("No actor");
+      await actor.addConversionInquiry(
+        data.name,
+        data.phone,
+        data.bike_model,
+        data.location,
+        data.petrol_expense,
+      );
+    },
+  });
+}

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddFranchiseApplication } from "@/hooks/useQueries";
 import {
+  ArrowRight,
   CheckCircle2,
   ClipboardList,
   GraduationCap,
@@ -21,23 +22,23 @@ import { toast } from "sonner";
 const benefits = [
   {
     icon: Package,
-    title: "Strong Supplier Network",
-    desc: "Access to 20+ EV brands and direct manufacturer relationships for better pricing.",
+    title: "Setup Assistance",
+    desc: "We help you set up your showroom from scratch — layout, branding, and display planning.",
   },
   {
     icon: GraduationCap,
     title: "Technical Training",
-    desc: "Comprehensive training for your staff on EV technology, sales, and service.",
+    desc: "Full training for your team on EV sales, service, and customer handling.",
   },
   {
     icon: Megaphone,
-    title: "Marketing Support",
-    desc: "Full branding kit, digital marketing assistance, and regional advertising support.",
+    title: "Branding Support",
+    desc: "Complete branding kit, marketing materials, and digital marketing assistance.",
   },
   {
     icon: TrendingUp,
-    title: "Attractive Margins",
-    desc: "Competitive profit margins with transparent revenue sharing model.",
+    title: "Supply Chain Support",
+    desc: "Direct access to 20+ brand suppliers with competitive pricing and margins.",
   },
 ];
 
@@ -76,7 +77,15 @@ export default function FranchisePage() {
   });
 
   useEffect(() => {
-    document.title = "Franchise | JSR Green Motors";
+    document.title = "EV Franchise Opportunity Telangana | JSR Green Motors";
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      (metaDesc as HTMLMetaElement).name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    (metaDesc as HTMLMetaElement).content =
+      "Start your own electric vehicle business with JSR Green Motors. Franchise opportunities in Telangana and Andhra Pradesh. Investment starting from ₹5 Lakhs.";
   }, []);
 
   const handleChange = (
@@ -119,7 +128,9 @@ export default function FranchisePage() {
             Business Opportunity
           </Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
-            Franchise <span className="text-brand-green">Opportunities</span>
+            Start Your Own{" "}
+            <span className="text-brand-green">Electric Vehicle Business</span>{" "}
+            With JSR Green Motors
           </h1>
           <p className="text-white/70 text-xl max-w-2xl mx-auto">
             Join India's fastest-growing EV network. Build a profitable business
@@ -128,15 +139,66 @@ export default function FranchisePage() {
         </div>
       </section>
 
+      {/* Why EV Business Now? */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="text-center mb-10">
+            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
+              Market Opportunity
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
+              Why EV Business Now?
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {[
+              {
+                stat: "40%",
+                label: "EV market growing annually",
+                desc: "India's EV market is one of the fastest-growing in Asia — now is the time to enter.",
+              },
+              {
+                stat: "↑ Rising",
+                label: "Petrol prices every year",
+                desc: "Customers are actively switching. The demand for affordable EVs has never been higher.",
+              },
+              {
+                stat: "30%",
+                label: "Govt. EV adoption target by 2030",
+                desc: "Government subsidies, policy support, and tax breaks make EV business highly profitable.",
+              },
+            ].map((item) => (
+              <div
+                key={item.stat}
+                className="bg-card border border-border rounded-2xl p-6 text-center hover:border-brand-green/40 transition-all"
+              >
+                <div
+                  className="text-4xl font-black font-display mb-2"
+                  style={{ color: "oklch(0.62 0.19 155)" }}
+                >
+                  {item.stat}
+                </div>
+                <h3 className="font-semibold text-foreground mb-2 text-sm uppercase tracking-wide">
+                  {item.label}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Benefits */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-brand-light-gray">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
             <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
               Why Partner With Us
             </Badge>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
-              What You Get
+              Support You Receive
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
               Our franchise partners benefit from a complete ecosystem of
@@ -163,6 +225,49 @@ export default function FranchisePage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Investment Estimation Block */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div
+            className="max-w-2xl mx-auto rounded-2xl p-10 text-center"
+            style={{
+              background:
+                "linear-gradient(135deg, oklch(0.12 0.01 145) 0%, oklch(0.18 0.05 155) 100%)",
+            }}
+          >
+            <Badge className="mb-4 bg-brand-green/20 text-brand-green border-brand-green/30 text-xs uppercase tracking-widest">
+              Investment
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-3">
+              Investment Starting From
+            </h2>
+            <div
+              className="text-6xl font-black font-display mb-4"
+              style={{ color: "oklch(0.72 0.19 155)" }}
+            >
+              ₹5 Lakhs
+            </div>
+            <div className="flex flex-wrap justify-center gap-4 text-white/70 text-sm mb-8">
+              {[
+                "Showroom setup",
+                "Initial inventory",
+                "Training & branding",
+              ].map((item) => (
+                <span key={item} className="flex items-center gap-1.5">
+                  <CheckCircle2 className="h-4 w-4 text-brand-green" />
+                  {item}
+                </span>
+              ))}
+            </div>
+            <a href="#franchise-form">
+              <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-bold px-10 py-3">
+                Apply for Franchise <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </a>
           </div>
         </div>
       </section>
@@ -206,7 +311,7 @@ export default function FranchisePage() {
       </section>
 
       {/* Application Form */}
-      <section className="py-20 bg-background">
+      <section id="franchise-form" className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-10">

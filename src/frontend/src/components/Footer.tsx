@@ -49,7 +49,7 @@ export default function Footer() {
           <div className="space-y-4">
             <Link to="/">
               <img
-                src="/assets/generated/jsr-logo-transparent.dim_300x100.png"
+                src="/assets/uploads/JSR_LOGO-2.png"
                 alt="JSR Green Motors"
                 className="h-10 w-auto object-contain"
               />
@@ -117,25 +117,27 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 text-brand-green mt-0.5 shrink-0" />
                 <span className="text-white/60 text-sm">
-                  JSR Green Motors, Andhra Pradesh & Telangana, India
+                  Suryapet road, beside Kashinadam function hall,
+                  <br />
+                  Kodad, Suryapet dist, Telangana-508206
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-brand-green shrink-0" />
                 <a
-                  href="tel:+91XXXXXXXXXX"
+                  href="tel:+919948955517"
                   className="text-white/60 hover:text-brand-green text-sm transition-colors"
                 >
-                  +91-XXXXXXXXXX
+                  +91 9948955517
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-brand-green shrink-0" />
                 <a
-                  href="mailto:info@jsrgreenmotors.com"
+                  href="mailto:jsrgreenmotors5399@gmail.com"
                   className="text-white/60 hover:text-brand-green text-sm transition-colors"
                 >
-                  info@jsrgreenmotors.com
+                  jsrgreenmotors5399@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-3">
@@ -177,8 +179,39 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Business Information Block */}
+        <div className="border-t border-white/10 mt-10 pt-6 pb-4">
+          <p className="text-white/30 text-xs text-center leading-relaxed">
+            <span className="font-medium text-white/40">Company:</span> JSR
+            Green Motors
+            <span className="mx-2 text-white/20">|</span>
+            <span className="font-medium text-white/40">GST:</span> [To be
+            updated]
+            <span className="mx-2 text-white/20">|</span>
+            <span className="font-medium text-white/40">Reg. Address:</span>{" "}
+            Suryapet road, beside Kashinadam function hall, Kodad, Suryapet
+            dist, Telangana-508206
+            <span className="mx-2 text-white/20">|</span>
+            <span className="font-medium text-white/40">Ph:</span>{" "}
+            <a
+              href="tel:+919948955517"
+              className="hover:text-white/50 transition-colors"
+            >
+              +91 9948955517
+            </a>
+            <span className="mx-2 text-white/20">|</span>
+            <span className="font-medium text-white/40">Email:</span>{" "}
+            <a
+              href="mailto:jsrgreenmotors5399@gmail.com"
+              className="hover:text-white/50 transition-colors"
+            >
+              jsrgreenmotors5399@gmail.com
+            </a>
+          </p>
+        </div>
+
         {/* Bottom Bar */}
-        <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/40 text-sm text-center sm:text-left">
             © {currentYear} JSR Green Motors. All rights reserved.
           </p>

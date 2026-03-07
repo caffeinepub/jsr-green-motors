@@ -122,7 +122,9 @@ export interface Vehicle {
 }
 export interface backendInterface {
     addAppointmentBooking(name: string, email: string, phone: string, service_type: string, preferred_date: string, preferred_time: string, notes: string): Promise<void>;
+    addCallbackRequest(name: string, phone: string, city: string, interest: string): Promise<void>;
     addContactSubmission(name: string, email: string, phone: string, message: string): Promise<void>;
+    addConversionInquiry(name: string, phone: string, bike_model: string, location: string, petrol_expense: string): Promise<void>;
     addFranchiseApplication(name: string, email: string, phone: string, city: string, state: string, investment_capacity: bigint, message: string): Promise<void>;
     addNewsletterSubscriber(email: string): Promise<void>;
     addQuoteRequest(name: string, email: string, phone: string, vehicle_interest: string, message: string): Promise<void>;
@@ -151,6 +153,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async addCallbackRequest(arg0: string, arg1: string, arg2: string, arg3: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addCallbackRequest(arg0, arg1, arg2, arg3);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addCallbackRequest(arg0, arg1, arg2, arg3);
+            return result;
+        }
+    }
     async addContactSubmission(arg0: string, arg1: string, arg2: string, arg3: string): Promise<void> {
         if (this.processError) {
             try {
@@ -162,6 +178,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.addContactSubmission(arg0, arg1, arg2, arg3);
+            return result;
+        }
+    }
+    async addConversionInquiry(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addConversionInquiry(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addConversionInquiry(arg0, arg1, arg2, arg3, arg4);
             return result;
         }
     }

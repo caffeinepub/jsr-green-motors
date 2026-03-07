@@ -3,7 +3,7 @@ import { SiWhatsapp } from "react-icons/si";
 export default function WhatsAppButton() {
   return (
     <a
-      href="https://wa.me/91XXXXXXXXXX?text=Hello%2C%20I%20am%20interested%20in%20JSR%20Green%20Motors%20products%20and%20services."
+      href="https://wa.me/919948955517?text=Hello%20JSR%20Green%20Motors%2C%20I%20am%20interested%20in%20your%20electric%20vehicles."
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"

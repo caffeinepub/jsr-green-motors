@@ -46,8 +46,16 @@ export interface _SERVICE {
     [string, string, string, string, string, string, string],
     undefined
   >,
+  'addCallbackRequest' : ActorMethod<
+    [string, string, string, string],
+    undefined
+  >,
   'addContactSubmission' : ActorMethod<
     [string, string, string, string],
+    undefined
+  >,
+  'addConversionInquiry' : ActorMethod<
+    [string, string, string, string, string],
     undefined
   >,
   'addFranchiseApplication' : ActorMethod<

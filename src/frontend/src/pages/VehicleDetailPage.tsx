@@ -1,4 +1,10 @@
 import QuoteModal from "@/components/QuoteModal";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -353,6 +359,83 @@ export default function VehicleDetailPage() {
         </div>
       </section>
 
+      {/* Running Cost Comparison */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl font-display font-bold text-foreground mb-6">
+              Running Cost Comparison
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="bg-card border border-border rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-orange-500/10 flex items-center justify-center">
+                    <span className="text-orange-500 text-sm">⛽</span>
+                  </div>
+                  <h3 className="font-semibold text-foreground">
+                    Petrol Monthly Cost
+                  </h3>
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex justify-between">
+                    <span>Fuel (60km/day)</span>
+                    <span className="text-foreground font-medium">~₹2,500</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Maintenance</span>
+                    <span className="text-foreground font-medium">~₹600</span>
+                  </div>
+                  <div className="flex justify-between border-t border-border pt-2 font-semibold">
+                    <span>Total</span>
+                    <span className="text-orange-500">~₹3,100</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-brand-green/5 border border-brand-green/30 rounded-2xl p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-brand-green/15 flex items-center justify-center">
+                    <Zap className="h-4 w-4 text-brand-green" />
+                  </div>
+                  <h3 className="font-semibold text-foreground">
+                    EV Monthly Cost
+                  </h3>
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex justify-between">
+                    <span>Charging (60km/day)</span>
+                    <span className="text-foreground font-medium">~₹350</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Maintenance</span>
+                    <span className="text-foreground font-medium">~₹150</span>
+                  </div>
+                  <div className="flex justify-between border-t border-border pt-2 font-semibold">
+                    <span>Total</span>
+                    <span className="text-brand-green">~₹500</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 bg-brand-green text-white rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div>
+                <div className="text-sm opacity-85">Monthly Savings</div>
+                <div className="text-2xl font-bold">₹2,600</div>
+              </div>
+              <div className="w-px h-10 bg-white/20 hidden sm:block" />
+              <div>
+                <div className="text-sm opacity-85">Annual Savings</div>
+                <div className="text-2xl font-bold">₹31,200</div>
+              </div>
+              <div className="w-px h-10 bg-white/20 hidden sm:block" />
+              <div className="text-center">
+                <div className="text-sm opacity-85">Cost Reduction</div>
+                <div className="text-2xl font-bold">~70%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Enquiry Form */}
       <section id="enquiry" className="py-16 bg-background">
         <div className="container mx-auto px-4 lg:px-6">
@@ -457,6 +540,65 @@ export default function VehicleDetailPage() {
                 </Button>
               </form>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Message */}
+      <section className="py-6 bg-brand-light-gray">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-3 bg-brand-green/10 border border-brand-green/25 rounded-xl px-5 py-4">
+              <CheckCircle2 className="h-5 w-5 text-brand-green shrink-0" />
+              <p className="text-sm font-medium text-foreground">
+                Delivered with Full Documentation &amp; Service Support — JSR
+                Green Motors stands with you after every purchase.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Model-Specific FAQ */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="max-w-2xl">
+            <h2 className="text-2xl font-display font-bold text-foreground mb-6">
+              Frequently Asked Questions
+            </h2>
+            <Accordion type="single" collapsible className="space-y-3">
+              {[
+                {
+                  q: `What is the real-world range of the ${vehicle.name}?`,
+                  a: `The ${vehicle.name} offers up to ${Number(vehicle.range_km)} km per charge under standard conditions. Real-world range may vary based on terrain, rider weight, and riding style.`,
+                },
+                {
+                  q: "How long does a full charge take?",
+                  a: `A full charge takes approximately ${vehicle.charging_hours} hours using the standard charger supplied. Fast charging options may be available — ask our team.`,
+                },
+                {
+                  q: "Is this vehicle covered by manufacturer warranty?",
+                  a: `Yes. The ${vehicle.name} comes with ${vehicle.warranty}. JSR Green Motors also provides after-sales service support for the duration of the warranty.`,
+                },
+                {
+                  q: "Can I get an EMI for this vehicle?",
+                  a: "Yes. We assist with financing through leading banks. EMI starts from as low as ₹2,000/month depending on the loan amount and tenure. Use the EMI calculator above for an estimate.",
+                },
+              ].map((faq) => (
+                <AccordionItem
+                  key={faq.q.slice(0, 40)}
+                  value={faq.q.slice(0, 40)}
+                  className="bg-card border border-border rounded-xl px-5 overflow-hidden"
+                >
+                  <AccordionTrigger className="text-left font-medium text-foreground hover:text-brand-green hover:no-underline py-4">
+                    {faq.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </section>

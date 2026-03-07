@@ -6,19 +6,27 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAddConversionInquiry } from "@/hooks/useQueries";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BadgeDollarSign,
   Check,
   CheckCircle,
+  CheckCircle2,
   Leaf,
+  Loader2,
   Search,
   Settings,
+  Shield,
+  Truck,
   Wrench,
   Zap,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const steps = [
   {
@@ -28,22 +36,28 @@ const steps = [
     desc: "Thorough assessment of your existing vehicle's frame, motor mounts, and electrical system compatibility.",
   },
   {
-    icon: Settings,
+    icon: BadgeDollarSign,
     step: "02",
-    title: "Component Selection",
-    desc: "We recommend the best motor, battery pack, and controller combination for your vehicle type and budget.",
+    title: "Quotation",
+    desc: "We provide a detailed quote with transparent pricing — no hidden charges, full breakdown provided.",
   },
   {
-    icon: Wrench,
+    icon: Settings,
     step: "03",
     title: "Installation",
     desc: "Certified technicians perform the conversion with precision, ensuring all safety standards are met.",
   },
   {
-    icon: CheckCircle,
+    icon: Wrench,
     step: "04",
-    title: "Testing & Handover",
-    desc: "Comprehensive testing of range, speed, and safety systems before handing over your converted EV.",
+    title: "Testing",
+    desc: "Comprehensive testing of range, speed, battery, and safety systems before handover.",
+  },
+  {
+    icon: CheckCircle,
+    step: "05",
+    title: "Delivery",
+    desc: "Your converted electric vehicle is handed over with full documentation and RTO compliance.",
   },
 ];
 
@@ -56,7 +70,7 @@ const benefits = [
   {
     icon: Leaf,
     title: "Zero Emissions",
-    desc: "Reduce your carbon footprint. Contribute to a cleaner Andhra Pradesh.",
+    desc: "Reduce your carbon footprint. Contribute to a cleaner Telangana.",
   },
   {
     icon: Wrench,
@@ -134,14 +148,77 @@ const faqs = [
   },
   {
     q: "Can I claim government subsidies on conversion?",
-    a: "Yes, EV conversions may be eligible for state-level subsidies under the Andhra Pradesh EV Policy. Our team will guide you through the documentation process.",
+    a: "Yes, EV conversions may be eligible for state-level subsidies under the Telangana EV Policy. Our team will guide you through the documentation process.",
+  },
+];
+
+const trustBadges = [
+  { icon: Shield, label: "Warranty Supported" },
+  { icon: CheckCircle2, label: "Certified Components" },
+  { icon: Truck, label: "Local Installation" },
+];
+
+const costTable = [
+  {
+    item: "Fuel / Charging",
+    petrol: "₹2,000–3,000",
+    electric: "₹200–400",
+  },
+  {
+    item: "Maintenance",
+    petrol: "₹500–800",
+    electric: "₹100–200",
+  },
+  {
+    item: "Total Monthly",
+    petrol: "₹2,500–3,800",
+    electric: "₹300–600",
+    isBold: true,
+  },
+  {
+    item: "Annual Savings",
+    petrol: "—",
+    electric: "₹25,000–40,000",
+    isHighlight: true,
   },
 ];
 
 export default function ConversionsPage() {
+  const [formSuccess, setFormSuccess] = useState(false);
+  const conversionMutation = useAddConversionInquiry();
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    bike_model: "",
+    location: "",
+    petrol_expense: "",
+  });
+
   useEffect(() => {
-    document.title = "EV Conversion | JSR Green Motors";
+    document.title = "Petrol to Electric Conversion | JSR Green Motors Kodad";
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      (metaDesc as HTMLMetaElement).name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    (metaDesc as HTMLMetaElement).content =
+      "Convert your petrol bike or scooter to electric. Save 70% on running costs. Certified EV conversion by JSR Green Motors, Kodad, Telangana.";
   }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await conversionMutation.mutateAsync(form);
+      setFormSuccess(true);
+    } catch {
+      toast.error("Failed to submit. Please try again.");
+    }
+  };
 
   return (
     <main className="pt-20">
@@ -160,26 +237,103 @@ export default function ConversionsPage() {
             Petrol → Electric
           </Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
-            Electric Vehicle{" "}
-            <span className="text-brand-green">Conversion</span>
+            Convert Your Petrol Bike to Electric &amp;{" "}
+            <span className="text-brand-green">
+              Save Up to 70% Running Cost
+            </span>
           </h1>
           <p className="text-white/70 text-xl max-w-2xl mx-auto mb-8">
-            Transform your existing petrol vehicle into a modern electric
-            vehicle. Save 70% on running costs with certified EV kits.
+            Certified EV conversion with quality components — local installation
+            in Kodad, Telangana.
           </p>
-          <Link to="/contact">
+          {/* Trust Badges */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {trustBadges.map((badge) => {
+              const Icon = badge.icon;
+              return (
+                <span
+                  key={badge.label}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-green/15 border border-brand-green/30 text-brand-green text-sm font-semibold"
+                >
+                  <Icon className="h-4 w-4" />
+                  {badge.label}
+                </span>
+              );
+            })}
+          </div>
+          <a href="#conversion-form">
             <Button
               size="lg"
               className="bg-brand-green hover:bg-brand-green/90 text-white font-bold px-10"
+              data-ocid="conversion_hero.primary_button"
             >
-              Start Conversion Today <ArrowRight className="h-4 w-4 ml-2" />
+              Book Free Inspection <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
-          </Link>
+          </a>
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* Cost Comparison Table */}
       <section className="py-20 bg-background">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-10">
+              <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
+                Cost Comparison
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
+                Petrol vs Electric — Real Numbers
+              </h2>
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                Based on 60km daily riding. See how much you save by switching
+                to electric.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border overflow-hidden">
+              <div className="grid grid-cols-3 bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border">
+                <div className="p-4">Item</div>
+                <div className="p-4 text-center border-x border-border text-orange-500">
+                  ⛽ Petrol Monthly
+                </div>
+                <div className="p-4 text-center text-brand-green">
+                  ⚡ Electric Monthly
+                </div>
+              </div>
+              {costTable.map((row) => (
+                <div
+                  key={row.item}
+                  className={`grid grid-cols-3 border-b border-border last:border-0 ${
+                    row.isHighlight
+                      ? "bg-brand-green/10"
+                      : row.isBold
+                        ? "bg-muted/30"
+                        : "bg-card"
+                  }`}
+                >
+                  <div
+                    className={`p-4 text-sm ${row.isBold || row.isHighlight ? "font-semibold text-foreground" : "text-muted-foreground"}`}
+                  >
+                    {row.item}
+                  </div>
+                  <div
+                    className={`p-4 text-sm text-center border-x border-border ${row.isHighlight ? "text-muted-foreground" : "text-orange-500 font-medium"}`}
+                  >
+                    {row.petrol}
+                  </div>
+                  <div
+                    className={`p-4 text-sm text-center font-semibold ${row.isHighlight ? "text-brand-green text-base" : "text-brand-green"}`}
+                  >
+                    {row.electric}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works — Horizontal Timeline */}
+      <section className="py-20 bg-brand-light-gray">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
             <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
@@ -189,11 +343,47 @@ export default function ConversionsPage() {
               How It Works
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Our proven 4-step conversion process ensures a safe, certified,
+              Our proven 5-step conversion process ensures a safe, certified,
               and high-quality transformation.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Desktop: horizontal timeline */}
+          <div className="hidden lg:flex items-start gap-0 overflow-x-auto">
+            {steps.map((step, idx) => {
+              const Icon = step.icon;
+              return (
+                <div
+                  key={step.step}
+                  className="flex flex-col items-center flex-1 min-w-0"
+                >
+                  {/* Step connector */}
+                  <div className="flex items-center w-full mb-6">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 ${idx === 0 ? "ml-auto mr-0" : idx === steps.length - 1 ? "ml-0 mr-auto" : "mx-auto"} bg-brand-green text-white font-bold text-sm`}
+                    >
+                      {step.step}
+                    </div>
+                    {idx < steps.length - 1 && (
+                      <div className="flex-1 h-0.5 bg-brand-green/30" />
+                    )}
+                  </div>
+                  <div className="bg-card border border-border rounded-2xl p-5 hover:border-brand-green/40 hover:shadow-green-glow-sm transition-all duration-300 mx-2 w-full">
+                    <div className="w-10 h-10 rounded-xl bg-brand-green/10 flex items-center justify-center mb-3">
+                      <Icon className="h-5 w-5 text-brand-green" />
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-1 text-sm">
+                      {step.title}
+                    </h3>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Mobile: vertical */}
+          <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-6">
             {steps.map((step) => {
               const Icon = step.icon;
               return (
@@ -220,7 +410,7 @@ export default function ConversionsPage() {
       </section>
 
       {/* Benefits */}
-      <section className="py-20 bg-brand-light-gray">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
             <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
@@ -255,7 +445,7 @@ export default function ConversionsPage() {
       </section>
 
       {/* Pricing */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-brand-light-gray">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
             <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
@@ -319,19 +509,165 @@ export default function ConversionsPage() {
                     </li>
                   ))}
                 </ul>
-                <Link to="/contact">
+                <a href="#conversion-form">
                   <Button
                     className={`w-full font-semibold ${
                       tier.highlight
                         ? "bg-white text-brand-green hover:bg-white/90"
                         : "bg-brand-green hover:bg-brand-green/90 text-white"
                     }`}
+                    data-ocid={`conversion_packages.${tier.name.toLowerCase()}_button`}
                   >
                     Get Started
                   </Button>
-                </Link>
+                </a>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Conversion Inquiry Form */}
+      <section id="conversion-form" className="py-20 bg-background">
+        <div className="container mx-auto px-4 lg:px-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-10">
+              <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
+                Book Now
+              </Badge>
+              <h2 className="text-3xl font-display font-bold text-foreground mb-3">
+                Request Free Inspection
+              </h2>
+              <p className="text-muted-foreground">
+                Fill the form below and our conversion expert will contact you
+                to schedule a free vehicle inspection.
+              </p>
+            </div>
+
+            {formSuccess ? (
+              <div
+                className="bg-card border border-brand-green/20 rounded-2xl p-10 text-center"
+                data-ocid="conversion_form.success_state"
+              >
+                <CheckCircle2 className="h-16 w-16 text-brand-green mx-auto mb-4" />
+                <h3 className="text-2xl font-semibold text-foreground mb-3">
+                  Request Received!
+                </h3>
+                <p className="text-muted-foreground mb-6">
+                  Thank you for contacting JSR Green Motors. Our EV Expert will
+                  reach you shortly.
+                </p>
+                <Button
+                  onClick={() => {
+                    setFormSuccess(false);
+                    setForm({
+                      name: "",
+                      phone: "",
+                      bike_model: "",
+                      location: "",
+                      petrol_expense: "",
+                    });
+                  }}
+                  className="bg-brand-green hover:bg-brand-green/90 text-white"
+                >
+                  Submit Another
+                </Button>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubmit}
+                className="bg-card border border-border rounded-2xl p-8 space-y-5"
+                style={{
+                  boxShadow:
+                    "0 0 0 2px oklch(0.62 0.19 155 / 0.15), 0 8px 30px rgba(0,0,0,0.08)",
+                }}
+              >
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="conv-name">Full Name</Label>
+                    <Input
+                      id="conv-name"
+                      name="name"
+                      placeholder="Your name"
+                      value={form.name}
+                      onChange={handleChange}
+                      data-ocid="conversion_form.name_input"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="conv-phone">
+                      Phone <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="conv-phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="+91 XXXXX XXXXX"
+                      value={form.phone}
+                      onChange={handleChange}
+                      required
+                      data-ocid="conversion_form.phone_input"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="conv-bike">
+                    Bike Model <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="conv-bike"
+                    name="bike_model"
+                    placeholder="e.g. Honda Activa 125, Bajaj Pulsar 150"
+                    value={form.bike_model}
+                    onChange={handleChange}
+                    required
+                    data-ocid="conversion_form.bike_model_input"
+                  />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="conv-location">Your Location/City</Label>
+                    <Input
+                      id="conv-location"
+                      name="location"
+                      placeholder="Your city or area"
+                      value={form.location}
+                      onChange={handleChange}
+                      data-ocid="conversion_form.location_input"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="conv-petrol">
+                      Approx. Monthly Petrol Expense
+                    </Label>
+                    <Input
+                      id="conv-petrol"
+                      name="petrol_expense"
+                      placeholder="e.g. ₹2,500"
+                      value={form.petrol_expense}
+                      onChange={handleChange}
+                      data-ocid="conversion_form.petrol_expense_input"
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  disabled={conversionMutation.isPending}
+                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold text-base py-6"
+                  style={{ boxShadow: "0 0 20px oklch(0.62 0.19 155 / 0.3)" }}
+                  data-ocid="conversion_form.submit_button"
+                >
+                  {conversionMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Book Free Inspection"
+                  )}
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </section>
@@ -376,22 +712,30 @@ export default function ConversionsPage() {
           </h2>
           <p className="text-white/65 mb-8 max-w-xl mx-auto">
             Book a free inspection today and our experts will assess your
-            vehicle for conversion.
+            vehicle for conversion. Call{" "}
+            <a
+              href="tel:+919948955517"
+              className="text-brand-green hover:underline"
+            >
+              +91 9948955517
+            </a>
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/contact">
+            <a href="#conversion-form">
               <Button
                 size="lg"
                 className="bg-brand-green hover:bg-brand-green/90 text-white font-bold px-10"
+                data-ocid="conversion_cta.primary_button"
               >
                 Start Conversion Today <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
-            </Link>
+            </a>
             <Link to="/contact">
               <Button
                 size="lg"
                 variant="outline"
                 className="border-white/40 text-white hover:bg-white/10 bg-transparent"
+                data-ocid="conversion_cta.contact_button"
               >
                 Contact Us
               </Button>

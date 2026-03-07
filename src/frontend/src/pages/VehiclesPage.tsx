@@ -18,7 +18,7 @@ export default function VehiclesPage() {
   const { data: vehicles, isLoading } = useAllVehicles();
 
   useEffect(() => {
-    document.title = "Vehicles | JSR Green Motors";
+    document.title = "Electric Scooters & Bikes | JSR Green Motors Kodad";
   }, []);
 
   const filteredVehicles: Vehicle[] =
@@ -135,7 +135,7 @@ export default function VehiclesPage() {
                         alt={vehicle.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
-                      <div className="absolute top-3 left-3 flex gap-2">
+                      <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
                         <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-green/90 text-white backdrop-blur-sm">
                           {vehicle.category}
                         </span>
@@ -144,6 +144,21 @@ export default function VehiclesPage() {
                             Featured
                           </span>
                         )}
+                      </div>
+                      {/* Range badge */}
+                      <div className="absolute top-3 right-3">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-brand-dark/85 text-brand-green backdrop-blur-sm border border-brand-green/30">
+                          {Number(vehicle.range_km)} km range
+                        </span>
+                      </div>
+                      {/* Use case tag */}
+                      <div className="absolute bottom-12 left-3">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/90 text-brand-dark">
+                          {Number(vehicle.range_km) > 100 ||
+                          Number(vehicle.motor_watts) > 1000
+                            ? "Best for Delivery"
+                            : "Best for City"}
+                        </span>
                       </div>
                       {/* Gradient bleed into card body */}
                       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card to-transparent" />
@@ -186,32 +201,48 @@ export default function VehiclesPage() {
                           {formatPrice(vehicle.price_max)}
                         </div>
 
-                        {/* Buttons: primary + ghost icon */}
-                        <div className="flex gap-2">
+                        {/* Buttons */}
+                        <div className="flex flex-col gap-2">
+                          <div className="flex gap-2">
+                            <Link
+                              to="/vehicles/$id"
+                              params={{ id: vehicle.id.toString() }}
+                              className="flex-1"
+                              data-ocid={`vehicles.view_button.${vehicle.id.toString()}`}
+                            >
+                              <Button
+                                className="w-full bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white text-sm font-semibold transition-all duration-150"
+                                style={{
+                                  boxShadow:
+                                    "0 0 12px oklch(0.62 0.19 155 / 0.25)",
+                                }}
+                              >
+                                View Details
+                              </Button>
+                            </Link>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="shrink-0 border-brand-green/40 text-brand-green hover:bg-brand-green/10 hover:border-brand-green transition-colors"
+                              onClick={() => openQuote(vehicle.name)}
+                              title="Get Quote"
+                              data-ocid={`vehicles.quote_button.${vehicle.id.toString()}`}
+                            >
+                              <Zap className="h-4 w-4" />
+                            </Button>
+                          </div>
                           <Link
-                            to="/vehicles/$id"
-                            params={{ id: vehicle.id.toString() }}
-                            className="flex-1"
+                            to="/contact"
+                            className="w-full"
+                            data-ocid={`vehicles.price_button.${vehicle.id.toString()}`}
                           >
                             <Button
-                              className="w-full bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white text-sm font-semibold transition-all duration-150"
-                              style={{
-                                boxShadow:
-                                  "0 0 12px oklch(0.62 0.19 155 / 0.25)",
-                              }}
+                              variant="outline"
+                              className="w-full border-brand-green/40 text-brand-green hover:bg-brand-green/10 hover:border-brand-green text-sm font-semibold transition-all duration-150"
                             >
-                              View Details
+                              Get Best Price
                             </Button>
                           </Link>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="shrink-0 border-brand-green/40 text-brand-green hover:bg-brand-green/10 hover:border-brand-green transition-colors"
-                            onClick={() => openQuote(vehicle.name)}
-                            title="Get Quote"
-                          >
-                            <Zap className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
                     </div>

@@ -46,8 +46,18 @@ export const idlService = IDL.Service({
       [],
       [],
     ),
+  'addCallbackRequest' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [],
+      [],
+    ),
   'addContactSubmission' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [],
+      [],
+    ),
+  'addConversionInquiry' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
       [],
       [],
     ),
@@ -117,8 +127,18 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
+    'addCallbackRequest' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [],
+        [],
+      ),
     'addContactSubmission' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [],
+        [],
+      ),
+    'addConversionInquiry' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [],
         [],
       ),

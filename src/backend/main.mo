@@ -113,6 +113,25 @@ actor {
     submitted_at : Time.Time;
   };
 
+  type ConversionInquiry = {
+    id : Nat;
+    name : Text;
+    phone : Text;
+    bike_model : Text;
+    location : Text;
+    petrol_expense : Text;
+    submitted_at : Time.Time;
+  };
+
+  type CallbackRequest = {
+    id : Nat;
+    name : Text;
+    phone : Text;
+    city : Text;
+    interest : Text;
+    submitted_at : Time.Time;
+  };
+
   let vehicles = Map.empty<Nat, Vehicle>();
   let blogPosts = Map.empty<Nat, BlogPost>();
   let contactSubmissions = Map.empty<Nat, ContactSubmission>();
@@ -121,6 +140,8 @@ actor {
   let franchiseApplications = Map.empty<Nat, FranchiseApplication>();
   let newsletterSubscribers = Map.empty<Nat, NewsletterSubscriber>();
   let vehicleEnquiries = Map.empty<Nat, VehicleEnquiry>();
+  let conversionInquiries = Map.empty<Nat, ConversionInquiry>();
+  let callbackRequests = Map.empty<Nat, CallbackRequest>();
 
   var nextVehicleId = 1;
   var nextBlogPostId = 1;
@@ -130,6 +151,9 @@ actor {
   var nextFranchiseApplicationId = 1;
   var nextNewsletterSubscriberId = 1;
   var nextVehicleEnquiryId = 1;
+  var nextConversionInquiryId = 1;
+  var nextCallbackRequestId = 1;
+
   var initialized = false;
 
   // Submission Functions
@@ -221,6 +245,35 @@ actor {
       submitted_at = Time.now();
     };
     vehicleEnquiries.add(id, enquiry);
+  };
+
+  public shared ({ caller }) func addConversionInquiry(name : Text, phone : Text, bike_model : Text, location : Text, petrol_expense : Text) : async () {
+    let id = nextConversionInquiryId;
+    nextConversionInquiryId += 1;
+    let inquiry : ConversionInquiry = {
+      id;
+      name;
+      phone;
+      bike_model;
+      location;
+      petrol_expense;
+      submitted_at = Time.now();
+    };
+    conversionInquiries.add(id, inquiry);
+  };
+
+  public shared ({ caller }) func addCallbackRequest(name : Text, phone : Text, city : Text, interest : Text) : async () {
+    let id = nextCallbackRequestId;
+    nextCallbackRequestId += 1;
+    let request : CallbackRequest = {
+      id;
+      name;
+      phone;
+      city;
+      interest;
+      submitted_at = Time.now();
+    };
+    callbackRequests.add(id, request);
   };
 
   // Vehicle Functions

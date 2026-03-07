@@ -10,7 +10,15 @@ export default function BlogPage() {
   const { data: posts, isLoading } = useAllBlogPosts();
 
   useEffect(() => {
-    document.title = "Blog | JSR Green Motors";
+    document.title = "EV Blog & News | JSR Green Motors";
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      (metaDesc as HTMLMetaElement).name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    (metaDesc as HTMLMetaElement).content =
+      "Read the latest articles on electric vehicles, EV buying guides, government subsidies, and EV conversion knowledge from JSR Green Motors.";
   }, []);
 
   return (

@@ -29,7 +29,15 @@ export default function ContactPage() {
   });
 
   useEffect(() => {
-    document.title = "Contact Us | JSR Green Motors";
+    document.title = "Contact JSR Green Motors | Kodad, Suryapet Telangana";
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      (metaDesc as HTMLMetaElement).name = "description";
+      document.head.appendChild(metaDesc);
+    }
+    (metaDesc as HTMLMetaElement).content =
+      "Contact JSR Green Motors at +91 9948955517. Located at Suryapet road, beside Kashinadam function hall, Kodad, Suryapet dist, Telangana-508206.";
   }, []);
 
   const handleChange = (
@@ -182,9 +190,20 @@ export default function ContactPage() {
                       Location
                     </h3>
                     <p className="text-muted-foreground text-sm">
-                      JSR Green Motors
+                      <strong className="text-foreground">Head Branch:</strong>
                       <br />
-                      Andhra Pradesh & Telangana, India
+                      Suryapet road, beside Kashinadam function hall,
+                      <br />
+                      Kodad, Suryapet dist, Telangana-508206
+                      <br />
+                      <span className="text-xs text-muted-foreground/70 mt-1 block">
+                        Also near: beside Srinivasa theater and union bank,
+                        Mathanagar, Kodad
+                      </span>
+                      <br />
+                      <strong className="text-foreground">Branch 2:</strong>
+                      <br />
+                      Haliya (phone to be updated)
                     </p>
                   </div>
                 </div>
@@ -196,10 +215,10 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-medium text-foreground mb-1">Phone</h3>
                     <a
-                      href="tel:+91XXXXXXXXXX"
+                      href="tel:+919948955517"
                       className="text-muted-foreground text-sm hover:text-brand-green transition-colors"
                     >
-                      +91-XXXXXXXXXX
+                      +91 9948955517
                     </a>
                   </div>
                 </div>
@@ -211,10 +230,10 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-medium text-foreground mb-1">Email</h3>
                     <a
-                      href="mailto:info@jsrgreenmotors.com"
+                      href="mailto:jsrgreenmotors5399@gmail.com"
                       className="text-muted-foreground text-sm hover:text-brand-green transition-colors"
                     >
-                      info@jsrgreenmotors.com
+                      jsrgreenmotors5399@gmail.com
                     </a>
                   </div>
                 </div>
@@ -245,28 +264,42 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Map Placeholder */}
+              {/* Google Maps Embed */}
               <div className="bg-card border border-border rounded-xl overflow-hidden">
-                <div className="h-56 bg-muted flex flex-col items-center justify-center gap-3">
-                  <div className="w-16 h-16 rounded-2xl bg-brand-green/10 flex items-center justify-center">
-                    <MapPin className="h-8 w-8 text-brand-green" />
-                  </div>
-                  <p className="text-muted-foreground text-sm font-medium">
-                    Find Us on Google Maps
-                  </p>
-                  <a
-                    href="https://maps.google.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="border-brand-green text-brand-green hover:bg-brand-green/10 text-xs"
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3815.8!2d79.9704!3d17.0803!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sJSR+Green+Motors+Kodad!5e0!3m2!1sen!2sin!4v1"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0, borderRadius: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  title="JSR Green Motors Location - Kodad, Telangana"
+                  data-ocid="contact.map_marker"
+                />
+              </div>
+
+              {/* Serving Areas */}
+              <div className="bg-card border border-border rounded-xl p-5">
+                <h3 className="font-medium text-foreground mb-3">
+                  Serving Areas
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    "Kodad",
+                    "Suryapet",
+                    "Haliya",
+                    "Nalgonda",
+                    "Miryalaguda",
+                    "Khammam",
+                    "Nagarjunasagar",
+                  ].map((area) => (
+                    <span
+                      key={area}
+                      className="px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-medium border border-brand-green/20"
                     >
-                      Open in Google Maps
-                    </Button>
-                  </a>
+                      {area}
+                    </span>
+                  ))}
                 </div>
               </div>
 

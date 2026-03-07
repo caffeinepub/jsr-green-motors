@@ -52,9 +52,9 @@ export default function Navbar() {
             className="flex items-center shrink-0 opacity-95 hover:opacity-100 transition-opacity"
           >
             <img
-              src="/assets/generated/jsr-logo-transparent.dim_300x100.png"
+              src="/assets/uploads/JSR_LOGO-2.png"
               alt="JSR Green Motors"
-              className="h-9 lg:h-11 w-auto object-contain"
+              className="h-10 lg:h-12 w-auto object-contain"
             />
           </Link>
 

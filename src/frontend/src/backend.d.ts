@@ -40,7 +40,9 @@ export interface Vehicle {
 }
 export interface backendInterface {
     addAppointmentBooking(name: string, email: string, phone: string, service_type: string, preferred_date: string, preferred_time: string, notes: string): Promise<void>;
+    addCallbackRequest(name: string, phone: string, city: string, interest: string): Promise<void>;
     addContactSubmission(name: string, email: string, phone: string, message: string): Promise<void>;
+    addConversionInquiry(name: string, phone: string, bike_model: string, location: string, petrol_expense: string): Promise<void>;
     addFranchiseApplication(name: string, email: string, phone: string, city: string, state: string, investment_capacity: bigint, message: string): Promise<void>;
     addNewsletterSubscriber(email: string): Promise<void>;
     addQuoteRequest(name: string, email: string, phone: string, vehicle_interest: string, message: string): Promise<void>;
