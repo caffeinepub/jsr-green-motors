@@ -102,7 +102,7 @@ export default function ServicesPage() {
   });
 
   useEffect(() => {
-    document.title = "Services | JSR Green Motors";
+    document.title = "Services | JSR Electric Vehicles";
   }, []);
 
   const handleChange = (
@@ -116,7 +116,26 @@ export default function ServicesPage() {
     try {
       await bookingMutation.mutateAsync(form);
       setBookingSuccess(true);
-      toast.success("Appointment booked successfully!");
+      toast.success(
+        "Appointment booked! Sending details to our service team...",
+      );
+      // Send service booking details to WhatsApp +91 9948955518 (service number)
+      const msg = [
+        "New Service Appointment - JSR Electric Vehicles",
+        `Name: ${form.name}`,
+        `Phone: ${form.phone}`,
+        `Email: ${form.email}`,
+        `Service: ${form.service_type}`,
+        `Date: ${form.preferred_date}`,
+        `Time: ${form.preferred_time}`,
+        form.notes ? `Notes: ${form.notes}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+      window.open(
+        `https://wa.me/919948955518?text=${encodeURIComponent(msg)}`,
+        "_blank",
+      );
     } catch {
       toast.error("Failed to book appointment. Please try again.");
     }

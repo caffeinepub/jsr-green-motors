@@ -82,7 +82,7 @@ export default function BookingCalendarPage() {
   const bookingMutation = useAddAppointmentBooking();
 
   useEffect(() => {
-    document.title = "Book a Test Drive | JSR Green Motors";
+    document.title = "Book a Test Drive | JSR Electric Vehicles";
   }, []);
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
@@ -158,7 +158,23 @@ export default function BookingCalendarPage() {
         notes: form.notes,
       });
       setBookingSuccess(true);
-      toast.success("Test drive booked successfully!");
+      toast.success("Test drive booked! Redirecting to WhatsApp...");
+      // Send test drive booking details to WhatsApp +91 9948955517 (sales number)
+      const msg = [
+        "New Test Drive Booking - JSR Electric Vehicles",
+        `Name: ${form.name}`,
+        `Phone: ${form.phone}`,
+        `Vehicle Interest: ${form.vehicle || "Not specified"}`,
+        `Date: ${selectedDateDisplay}`,
+        `Time: ${selectedTime}`,
+        form.notes ? `Notes: ${form.notes}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+      window.open(
+        `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
+        "_blank",
+      );
     } catch {
       toast.error("Booking failed. Please try again.");
     }

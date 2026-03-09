@@ -46,7 +46,24 @@ export default function QuoteModal({
     try {
       await quoteMutation.mutateAsync(form);
       setSuccess(true);
-      toast.success("Quote request submitted successfully!");
+      toast.success("Quote request submitted! Redirecting to WhatsApp...");
+      // Send enquiry details to WhatsApp +91 9948955517
+      const msg = [
+        "Hello JSR Electric Vehicles,",
+        `Name: ${form.name}`,
+        `Phone: ${form.phone}`,
+        `Email: ${form.email}`,
+        form.vehicle_interest
+          ? `Vehicle Interest: ${form.vehicle_interest}`
+          : "",
+        form.message ? `Message: ${form.message}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+      window.open(
+        `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
+        "_blank",
+      );
     } catch {
       toast.error("Failed to submit. Please try again.");
     }

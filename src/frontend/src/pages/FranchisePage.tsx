@@ -59,7 +59,7 @@ const steps = [
     icon: Rocket,
     step: "03",
     title: "Launch",
-    desc: "Complete onboarding, store setup, and launch your JSR Green Motors franchise.",
+    desc: "Complete onboarding, store setup, and launch your JSR Electric Vehicles franchise.",
   },
 ];
 
@@ -77,7 +77,8 @@ export default function FranchisePage() {
   });
 
   useEffect(() => {
-    document.title = "EV Franchise Opportunity Telangana | JSR Green Motors";
+    document.title =
+      "EV Franchise Opportunity Telangana | JSR Electric Vehicles";
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
@@ -85,7 +86,7 @@ export default function FranchisePage() {
       document.head.appendChild(metaDesc);
     }
     (metaDesc as HTMLMetaElement).content =
-      "Start your own electric vehicle business with JSR Green Motors. Franchise opportunities in Telangana and Andhra Pradesh. Investment starting from ₹5 Lakhs.";
+      "Start your own electric vehicle business with JSR Electric Vehicles. Franchise opportunities in Telangana and Andhra Pradesh. Investment starting from ₹5 Lakhs.";
   }, []);
 
   const handleChange = (
@@ -104,11 +105,18 @@ export default function FranchisePage() {
         ...form,
         investment_capacity: investmentCapacity,
       });
-      setSuccess(true);
-      toast.success("Franchise application submitted!");
     } catch {
-      toast.error("Failed to submit. Please try again.");
+      // best-effort save, continue to WhatsApp regardless
     }
+    // Open WhatsApp with pre-filled franchise details
+    const msg = encodeURIComponent(
+      `Hello JSR Electric Vehicles,\n\nI am interested in your Franchise Opportunity.\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nCity: ${form.city}\nState: ${form.state}\nInvestment Budget: ₹${form.investment_capacity}\nMessage: ${form.message || "N/A"}`,
+    );
+    window.open(`https://wa.me/919948955517?text=${msg}`, "_blank");
+    setSuccess(true);
+    toast.success(
+      "Redirecting to WhatsApp — our franchise team will reach you soon!",
+    );
   };
 
   return (
@@ -130,11 +138,11 @@ export default function FranchisePage() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6">
             Start Your Own{" "}
             <span className="text-brand-green">Electric Vehicle Business</span>{" "}
-            With JSR Green Motors
+            With JSR Electric Vehicles
           </h1>
           <p className="text-white/70 text-xl max-w-2xl mx-auto">
             Join India's fastest-growing EV network. Build a profitable business
-            with JSR Green Motors' proven franchise model.
+            with JSR Electric Vehicles' proven franchise model.
           </p>
         </div>
       </section>
@@ -331,12 +339,11 @@ export default function FranchisePage() {
               <div className="bg-card border border-brand-green/20 rounded-2xl p-10 text-center">
                 <CheckCircle2 className="h-16 w-16 text-brand-green mx-auto mb-4" />
                 <h3 className="text-2xl font-semibold text-foreground mb-3">
-                  Application Received!
+                  Opening WhatsApp...
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Thank you for your interest in the JSR Green Motors franchise.
-                  Our team will review your application and contact you within
-                  48 hours.
+                  Your franchise enquiry has been forwarded to WhatsApp. Our
+                  franchise team will contact you shortly on +91 9948955517.
                 </p>
                 <Button
                   onClick={() => setSuccess(false)}
@@ -449,11 +456,11 @@ export default function FranchisePage() {
                 >
                   {franchiseMutation.isPending ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />{" "}
-                      Submitting...
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Opening
+                      WhatsApp...
                     </>
                   ) : (
-                    "Submit Application"
+                    "Apply via WhatsApp"
                   )}
                 </Button>
               </form>

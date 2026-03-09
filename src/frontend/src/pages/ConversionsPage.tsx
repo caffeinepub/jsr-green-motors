@@ -195,7 +195,8 @@ export default function ConversionsPage() {
   });
 
   useEffect(() => {
-    document.title = "Petrol to Electric Conversion | JSR Green Motors Kodad";
+    document.title =
+      "Petrol to Electric Conversion | JSR Electric Vehicles Kodad";
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
@@ -203,7 +204,7 @@ export default function ConversionsPage() {
       document.head.appendChild(metaDesc);
     }
     (metaDesc as HTMLMetaElement).content =
-      "Convert your petrol bike or scooter to electric. Save 70% on running costs. Certified EV conversion by JSR Green Motors, Kodad, Telangana.";
+      "Convert your petrol bike or scooter to electric. Save 70% on running costs. Certified EV conversion by JSR Electric Vehicles, Kodad, Telangana.";
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -215,6 +216,24 @@ export default function ConversionsPage() {
     try {
       await conversionMutation.mutateAsync(form);
       setFormSuccess(true);
+      toast.success("Request submitted! Redirecting to WhatsApp...");
+      // Send conversion enquiry to WhatsApp +91 9948955517 (sales/conversion number)
+      const msg = [
+        "New EV Conversion Enquiry - JSR Electric Vehicles",
+        `Name: ${form.name}`,
+        `Phone: ${form.phone}`,
+        form.bike_model ? `Bike Model: ${form.bike_model}` : "",
+        form.location ? `Location: ${form.location}` : "",
+        form.petrol_expense
+          ? `Monthly Petrol Expense: ${form.petrol_expense}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+      window.open(
+        `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
+        "_blank",
+      );
     } catch {
       toast.error("Failed to submit. Please try again.");
     }
@@ -554,8 +573,8 @@ export default function ConversionsPage() {
                   Request Received!
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  Thank you for contacting JSR Green Motors. Our EV Expert will
-                  reach you shortly.
+                  Thank you for contacting JSR Electric Vehicles. Our EV Expert
+                  will reach you shortly.
                 </p>
                 <Button
                   onClick={() => {

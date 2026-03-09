@@ -54,7 +54,7 @@ export default function Navbar() {
           >
             <img
               src="/assets/uploads/JSR_LOGO-2.png"
-              alt="JSR Green Motors"
+              alt="JSR Electric Vehicles"
               className="h-10 lg:h-12 w-auto object-contain"
             />
           </Link>

@@ -134,7 +134,7 @@ const testimonials = [
     name: "Nagaraju M.",
     city: "Haliya",
     quote:
-      "Got my petrol bike converted to electric. Saving ₹3,000 per month on fuel. Highly recommend JSR Green Motors.",
+      "Got my petrol bike converted to electric. Saving ₹3,000 per month on fuel. Highly recommend JSR Electric Vehicles.",
     rating: 5,
   },
 ];
@@ -183,7 +183,7 @@ export default function HomePage() {
 
   useEffect(() => {
     document.title =
-      "Best Electric Scooters & EV Conversion in Andhra Pradesh | JSR Green Motors";
+      "Best Electric Scooters & EV Conversion in Telangana | JSR Electric Vehicles";
     // Set meta description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
@@ -205,6 +205,21 @@ export default function HomePage() {
     try {
       await callbackMutation.mutateAsync(callbackForm);
       setCallbackSuccess(true);
+      toast.success("Request submitted! Redirecting to WhatsApp...");
+      // Send lead details to WhatsApp +91 9948955517 (sales number)
+      const msg = [
+        "New Callback Request - JSR Electric Vehicles",
+        callbackForm.name ? `Name: ${callbackForm.name}` : "",
+        `Phone: ${callbackForm.phone}`,
+        callbackForm.city ? `City: ${callbackForm.city}` : "",
+        `Interested In: ${callbackForm.interest}`,
+      ]
+        .filter(Boolean)
+        .join("\n");
+      window.open(
+        `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
+        "_blank",
+      );
     } catch {
       toast.error("Failed to submit. Please try again.");
     } finally {
@@ -392,7 +407,7 @@ export default function HomePage() {
                   <Check className="h-8 w-8 text-brand-green" />
                 </div>
                 <p className="text-foreground font-semibold text-lg mb-2">
-                  Thank you for contacting JSR Green Motors.
+                  Thank you for contacting JSR Electric Vehicles.
                 </p>
                 <p className="text-muted-foreground">
                   Our EV Expert will reach you shortly.
@@ -714,7 +729,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
             <Badge className="mb-3 bg-brand-green/20 text-brand-green border-brand-green/30 text-xs uppercase tracking-widest">
-              Why JSR Green Motors
+              Why JSR Electric Vehicles
             </Badge>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-3">
               Why Choose Us?
@@ -756,7 +771,7 @@ export default function HomePage() {
               Our Difference
             </Badge>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
-              Why JSR Green Motors?
+              Why JSR Electric Vehicles?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium">
               We Are Not Just a Dealer.{" "}
@@ -803,7 +818,7 @@ export default function HomePage() {
             <div className="relative overflow-hidden rounded-2xl shadow-card-hover group">
               <img
                 src="/assets/uploads/ChatGPT-Image-Feb-9-2026-06_33_19-PM-6.png"
-                alt="JSR Green Motors showroom exterior at Kodad"
+                alt="JSR Electric Vehicles showroom exterior at Kodad"
                 className="w-full h-64 md:h-72 object-cover group-hover:scale-105 transition-transform duration-700"
                 loading="lazy"
               />
@@ -818,7 +833,7 @@ export default function HomePage() {
               <div className="relative overflow-hidden rounded-2xl shadow-card-hover group flex-1">
                 <img
                   src="/assets/uploads/Gemini_Generated_Image_nutgscnutgscnutg-5.png"
-                  alt="JSR Green Motors showroom interior with multiple electric scooters"
+                  alt="JSR Electric Vehicles showroom interior with multiple electric scooters"
                   className="w-full h-full object-cover min-h-[140px] group-hover:scale-105 transition-transform duration-700"
                   loading="lazy"
                 />
@@ -833,7 +848,7 @@ export default function HomePage() {
                 <div className="text-center">
                   <img
                     src="/assets/uploads/dynamo-lima-light-green-electric-scooter-500x500-removebg-preview-3.png"
-                    alt="Featured electric scooter at JSR Green Motors"
+                    alt="Featured electric scooter at JSR Electric Vehicles"
                     className="h-28 w-auto object-contain mx-auto mb-3 group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
@@ -973,7 +988,7 @@ export default function HomePage() {
                 Partner With Us
               </h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
-                Become a JSR Green Motors franchise partner and be part of
+                Become a JSR Electric Vehicles franchise partner and be part of
                 India's fastest-growing EV movement. Build a successful business
                 with our proven model.
               </p>
@@ -1002,7 +1017,7 @@ export default function HomePage() {
             <div className="relative">
               <img
                 src="/assets/uploads/Gemini_Generated_Image_nutgscnutgscnutg-5.png"
-                alt="JSR Green Motors Franchise Showroom Interior"
+                alt="JSR Electric Vehicles Franchise Showroom Interior"
                 className="rounded-2xl object-cover w-full h-72 shadow-card-hover"
               />
               <div className="absolute -bottom-4 -left-4 bg-brand-green text-white rounded-xl p-4 shadow-lg">
@@ -1078,7 +1093,7 @@ export default function HomePage() {
           <span className="text-[10px] font-medium">Call Now</span>
         </a>
         <a
-          href="https://wa.me/919948955517?text=Hello%20JSR%20Green%20Motors%2C%20I%20am%20interested%20in%20your%20electric%20vehicles."
+          href="https://wa.me/919948955517?text=Hello%20JSR%20Electric%20Vehicles%2C%20I%20am%20interested%20in%20your%20electric%20vehicles."
           target="_blank"
           rel="noopener noreferrer"
           className="flex-1 flex flex-col items-center justify-center gap-0.5 text-white hover:bg-white/5 transition-colors border-x border-white/10"

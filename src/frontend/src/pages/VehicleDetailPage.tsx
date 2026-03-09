@@ -61,7 +61,7 @@ export default function VehicleDetailPage() {
 
   useEffect(() => {
     if (vehicle) {
-      document.title = `${vehicle.name} | JSR Green Motors`;
+      document.title = `${vehicle.name} | JSR Electric Vehicles`;
       setLoanAmount(Number(vehicle.price_min));
     }
   }, [vehicle]);
@@ -578,7 +578,7 @@ export default function VehicleDetailPage() {
                 },
                 {
                   q: "Is this vehicle covered by manufacturer warranty?",
-                  a: `Yes. The ${vehicle.name} comes with ${vehicle.warranty}. JSR Green Motors also provides after-sales service support for the duration of the warranty.`,
+                  a: `Yes. The ${vehicle.name} comes with ${vehicle.warranty}. JSR Electric Vehicles also provides after-sales service support for the duration of the warranty.`,
                 },
                 {
                   q: "Can I get an EMI for this vehicle?",

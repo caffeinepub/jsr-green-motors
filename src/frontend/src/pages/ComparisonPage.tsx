@@ -432,7 +432,7 @@ export default function ComparisonPage() {
   );
 
   useEffect(() => {
-    document.title = "Compare Electric Vehicles | JSR Green Motors";
+    document.title = "Compare Electric Vehicles | JSR Electric Vehicles";
   }, []);
 
   // Sync URL when selections change

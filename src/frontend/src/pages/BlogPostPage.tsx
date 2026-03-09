@@ -17,7 +17,7 @@ export default function BlogPostPage() {
 
   useEffect(() => {
     if (post) {
-      document.title = `${post.title} | JSR Green Motors Blog`;
+      document.title = `${post.title} | JSR Electric Vehicles Blog`;
     }
   }, [post]);
 

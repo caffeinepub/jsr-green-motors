@@ -2,6 +2,7 @@ import QuoteModal from "@/components/QuoteModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { STATIC_VEHICLES } from "@/data/vehicles";
 import { useAllVehicles } from "@/hooks/useQueries";
 import { formatPrice, getVehicleImage } from "@/utils/helpers";
 import { Link } from "@tanstack/react-router";
@@ -36,17 +37,19 @@ export default function VehiclesPage() {
   const [compareList, setCompareList] = useState<bigint[]>([]);
   const { data: vehicles, isLoading } = useAllVehicles();
   useEffect(() => {
-    document.title = "Electric Scooters & Bikes | JSR Green Motors Kodad";
+    document.title = "Electric Scooters & Bikes | JSR Electric Vehicles Kodad";
   }, []);
 
-  const filteredVehicles: Vehicle[] =
-    vehicles?.filter((v) => {
-      const categoryMatch =
-        activeCategory === "All" || v.category === activeCategory;
-      const brandMatch =
-        activeBrand === "All Brands" || v.brand === activeBrand;
-      return categoryMatch && brandMatch;
-    }) ?? [];
+  // Use backend data if available, otherwise fall back to static list
+  const vehicleSource = (
+    vehicles && vehicles.length > 0 ? vehicles : STATIC_VEHICLES
+  ) as Vehicle[];
+  const filteredVehicles: Vehicle[] = vehicleSource.filter((v) => {
+    const categoryMatch =
+      activeCategory === "All" || v.category === activeCategory;
+    const brandMatch = activeBrand === "All Brands" || v.brand === activeBrand;
+    return categoryMatch && brandMatch;
+  });
 
   const openQuote = (vehicleName: string) => {
     setSelectedVehicle(vehicleName);

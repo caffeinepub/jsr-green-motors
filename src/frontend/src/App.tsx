@@ -24,7 +24,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-const SEED_KEY = "jsr_seeded_v3";
+const SEED_KEY = "jsr_seeded_v5";
 
 function SeedInitializer() {
   const { actor, isFetching } = useActor();

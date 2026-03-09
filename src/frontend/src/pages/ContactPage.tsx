@@ -29,7 +29,8 @@ export default function ContactPage() {
   });
 
   useEffect(() => {
-    document.title = "Contact JSR Green Motors | Kodad, Suryapet Telangana";
+    document.title =
+      "Contact JSR Electric Vehicles | Kodad, Suryapet Telangana";
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
@@ -37,7 +38,7 @@ export default function ContactPage() {
       document.head.appendChild(metaDesc);
     }
     (metaDesc as HTMLMetaElement).content =
-      "Contact JSR Green Motors at +91 9948955517. Located at Suryapet road, beside Kashinadam function hall, Kodad, Suryapet dist, Telangana-508206.";
+      "Contact JSR Electric Vehicles at +91 9948955517. Located at Suryapet road, beside Kashinadam function hall, Kodad, Suryapet dist, Telangana-508206.";
   }, []);
 
   const handleChange = (
@@ -50,11 +51,16 @@ export default function ContactPage() {
     e.preventDefault();
     try {
       await contactMutation.mutateAsync(form);
-      setSuccess(true);
-      toast.success("Message sent! We'll be in touch soon.");
     } catch {
-      toast.error("Failed to send message. Please try again.");
+      // best-effort save, continue to WhatsApp regardless
     }
+    // Open WhatsApp with pre-filled message
+    const msg = encodeURIComponent(
+      `Hello JSR Electric Vehicles,\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nMessage: ${form.message}`,
+    );
+    window.open(`https://wa.me/919948955517?text=${msg}`, "_blank");
+    setSuccess(true);
+    toast.success("Redirecting to WhatsApp — we'll be in touch soon!");
   };
 
   return (
@@ -88,11 +94,11 @@ export default function ContactPage() {
                 <div className="bg-card border border-brand-green/20 rounded-2xl p-10 text-center">
                   <CheckCircle2 className="h-16 w-16 text-brand-green mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-2">
-                    Message Sent!
+                    Opening WhatsApp...
                   </h3>
                   <p className="text-muted-foreground mb-6">
-                    Thank you for reaching out. We'll get back to you within 24
-                    hours.
+                    Your message has been forwarded to WhatsApp. Our team will
+                    reply shortly on +91 9948955517.
                   </p>
                   <Button
                     onClick={() => setSuccess(false)}
@@ -163,10 +169,10 @@ export default function ContactPage() {
                     {contactMutation.isPending ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />{" "}
-                        Sending...
+                        Opening WhatsApp...
                       </>
                     ) : (
-                      "Send Message"
+                      "Send via WhatsApp"
                     )}
                   </Button>
                 </form>
@@ -273,7 +279,7 @@ export default function ContactPage() {
                   style={{ border: 0, borderRadius: 0 }}
                   allowFullScreen
                   loading="lazy"
-                  title="JSR Green Motors Location - Kodad, Telangana"
+                  title="JSR Electric Vehicles Location - Kodad, Telangana"
                   data-ocid="contact.map_marker"
                 />
               </div>

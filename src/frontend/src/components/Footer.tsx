@@ -50,13 +50,13 @@ export default function Footer() {
             <Link to="/">
               <img
                 src="/assets/uploads/JSR_LOGO-2.png"
-                alt="JSR Green Motors"
+                alt="JSR Electric Vehicles"
                 className="h-10 w-auto object-contain"
               />
             </Link>
             <p className="text-white/60 text-sm leading-relaxed">
               Drive the Future — Go Electric. Your trusted multi-brand EV
-              showroom & conversion experts in Andhra Pradesh & Telangana.
+              showroom & conversion experts in Telangana.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <a
@@ -157,7 +157,8 @@ export default function Footer() {
               Stay Updated
             </h3>
             <p className="text-white/60 text-sm mb-4">
-              Get the latest EV news, offers & updates from JSR Green Motors.
+              Get the latest EV news, offers & updates from JSR Electric
+              Vehicles.
             </p>
             <form onSubmit={handleSubscribe} className="space-y-2">
               <Input
@@ -183,7 +184,7 @@ export default function Footer() {
         <div className="border-t border-white/10 mt-10 pt-6 pb-4">
           <p className="text-white/30 text-xs text-center leading-relaxed">
             <span className="font-medium text-white/40">Company:</span> JSR
-            Green Motors
+            Electric Vehicles
             <span className="mx-2 text-white/20">|</span>
             <span className="font-medium text-white/40">GST:</span> [To be
             updated]
@@ -213,7 +214,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/40 text-sm text-center sm:text-left">
-            © {currentYear} JSR Green Motors. All rights reserved.
+            © {currentYear} JSR Electric Vehicles. All rights reserved.
           </p>
           <a
             href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
