@@ -619,7 +619,7 @@ export default function HomePage() {
                   {/* Image with gradient bleed into card body */}
                   <div className="relative overflow-hidden h-52">
                     <img
-                      src={getVehicleImage(vehicle.id)}
+                      src={getVehicleImage(vehicle.id, vehicle.brand)}
                       alt={vehicle.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />

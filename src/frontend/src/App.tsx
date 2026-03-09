@@ -6,6 +6,8 @@ import { useActor } from "@/hooks/useActor";
 import AboutPage from "@/pages/AboutPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPostPage from "@/pages/BlogPostPage";
+import BookingCalendarPage from "@/pages/BookingCalendarPage";
+import ComparisonPage from "@/pages/ComparisonPage";
 import ContactPage from "@/pages/ContactPage";
 import ConversionsPage from "@/pages/ConversionsPage";
 import FranchisePage from "@/pages/FranchisePage";
@@ -22,7 +24,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-const SEED_KEY = "jsr_seeded_v1";
+const SEED_KEY = "jsr_seeded_v3";
 
 function SeedInitializer() {
   const { actor, isFetching } = useActor();
@@ -123,6 +125,18 @@ const contactRoute = createRoute({
   component: ContactPage,
 });
 
+const compareRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/compare",
+  component: ComparisonPage,
+});
+
+const bookingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/booking",
+  component: BookingCalendarPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
@@ -134,6 +148,8 @@ const routeTree = rootRoute.addChildren([
   blogRoute,
   blogPostRoute,
   contactRoute,
+  compareRoute,
+  bookingRoute,
 ]);
 
 const router = createRouter({ routeTree });

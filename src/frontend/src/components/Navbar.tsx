@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Menu, X, Zap } from "lucide-react";
+import { CalendarDays, GitCompareArrows, Menu, X, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import QuoteModal from "./QuoteModal";
 
@@ -8,6 +8,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/vehicles", label: "Vehicles" },
+  { href: "/compare", label: "Compare" },
   { href: "/services", label: "Services" },
   { href: "/franchise", label: "Franchise" },
   { href: "/conversions", label: "Conversions" },
@@ -84,7 +85,15 @@ export default function Navbar() {
           </ul>
 
           {/* CTA + Mobile Toggle */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Link
+              to="/booking"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white/70 hover:text-white border border-white/15 hover:border-white/30 rounded-md transition-all duration-200"
+              data-ocid="nav.link"
+            >
+              <CalendarDays className="h-4 w-4 text-brand-green" />
+              Book Test Drive
+            </Link>
             <Button
               onClick={() => setQuoteOpen(true)}
               className="hidden sm:flex items-center gap-2 bg-brand-green hover:bg-brand-green/90 hover:scale-[1.04] active:scale-95 text-white font-semibold px-4 py-2 text-sm rounded-md transition-all duration-200"
@@ -129,6 +138,16 @@ export default function Navbar() {
                   </Link>
                 </li>
               ))}
+              <li className="px-4 py-2">
+                <Link
+                  to="/booking"
+                  className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg bg-brand-green/10 text-brand-green text-sm font-semibold hover:bg-brand-green/20 transition-colors"
+                  data-ocid="nav.link"
+                >
+                  <CalendarDays className="h-4 w-4" />
+                  Book Test Drive
+                </Link>
+              </li>
               <li className="px-4 py-3">
                 <Button
                   onClick={() => {

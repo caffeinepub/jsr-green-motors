@@ -1,11 +1,11 @@
 import Text "mo:core/Text";
-import Int "mo:core/Int";
-import Iter "mo:core/Iter";
-import Array "mo:core/Array";
+import Map "mo:core/Map";
 import Time "mo:core/Time";
 import List "mo:core/List";
+import Array "mo:core/Array";
 import Order "mo:core/Order";
-import Map "mo:core/Map";
+import Iter "mo:core/Iter";
+import Int "mo:core/Int";
 import Runtime "mo:core/Runtime";
 
 actor {
@@ -153,10 +153,8 @@ actor {
   var nextVehicleEnquiryId = 1;
   var nextConversionInquiryId = 1;
   var nextCallbackRequestId = 1;
-
   var initialized = false;
 
-  // Submission Functions
   public shared ({ caller }) func addContactSubmission(name : Text, email : Text, phone : Text, message : Text) : async () {
     let id = nextContactSubmissionId;
     nextContactSubmissionId += 1;
@@ -276,7 +274,6 @@ actor {
     callbackRequests.add(id, request);
   };
 
-  // Vehicle Functions
   public query ({ caller }) func getAllVehicles() : async [Vehicle] {
     vehicles.values().toArray().sort();
   };
@@ -296,7 +293,6 @@ actor {
     };
   };
 
-  // Blog Functions
   public query ({ caller }) func getAllPublishedBlogPosts() : async [BlogPost] {
     blogPosts.values().toArray().values().filter(func(p) { p.is_published }).toArray().sort();
   };
@@ -308,128 +304,444 @@ actor {
     };
   };
 
-  // Seed Data
   public shared ({ caller }) func seedData() : async () {
     if (initialized) { Runtime.trap("Data has already been initialized.") };
 
-    // Vehicles
     let vehicleList = List.fromArray<Vehicle>([
+      // Dynamo
       {
         id = nextVehicleId;
-        name = "Green Scooter X1";
-        brand = "ElectroMotors";
+        name = "Lima";
+        brand = "Dynamo";
         category = "Scooter";
-        range_km = 80;
-        top_speed = 45;
+        range_km = 100;
+        top_speed = 55;
         battery_kwh = 2.5;
-        charging_hours = 4.5;
-        price_min = 75000;
+        charging_hours = 4.0;
+        price_min = 80000;
         price_max = 90000;
         motor_watts = 1200;
-        brakes = "Disc";
-        suspension = "Front Telescopic";
-        warranty = "2 Years";
-        description = "A compact yet powerful electric scooter for city commute.";
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Glide through city streets with unmatched style, ease, and comfort. The Dynamo Lima is designed for the modern urban commuter.";
         is_featured = true;
       },
       {
         id = nextVehicleId + 1;
-        name = "Urban Rider";
-        brand = "EcoWheels";
-        category = "E-Bike";
-        range_km = 120;
-        top_speed = 25;
-        battery_kwh = 1.2;
-        charging_hours = 3.0;
-        price_min = 50000;
-        price_max = 60000;
-        motor_watts = 500;
-        brakes = "V-Brakes";
-        suspension = "Front Suspension";
-        warranty = "1 Year";
-        description = "Perfect for daily commutes and urban exploration.";
+        name = "Flyer";
+        brand = "Dynamo";
+        category = "Scooter";
+        range_km = 100;
+        top_speed = 60;
+        battery_kwh = 2.8;
+        charging_hours = 4.5;
+        price_min = 78000;
+        price_max = 88000;
+        motor_watts = 1500;
+        brakes = "Disc";
+        suspension = "Front Telescopic, Rear Hydraulic";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "The Dynamo Flyer is built for speed and style — everyday adventures with reliability and thrill.";
         is_featured = false;
       },
       {
         id = nextVehicleId + 2;
-        name = "Eco Cruiser";
-        brand = "VoltCycle";
-        category = "Bike";
-        range_km = 100;
-        top_speed = 60;
-        battery_kwh = 3.0;
+        name = "RX1";
+        brand = "Dynamo";
+        category = "Scooter";
+        range_km = 150;
+        top_speed = 75;
+        battery_kwh = 3.5;
         charging_hours = 5.0;
         price_min = 95000;
-        price_max = 110000;
-        motor_watts = 1500;
-        brakes = "Disc";
-        suspension = "Dual Suspension";
-        warranty = "3 Years";
-        description = "A robust bike designed for performance and comfort.";
+        price_max = 108000;
+        motor_watts = 2000;
+        brakes = "Dual Disc";
+        suspension = "Front Upside-Down, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Experience sporty rides with a perfect blend of speed, style, and technology. The Dynamo RX1 is Dynamo`s performance flagship.";
         is_featured = true;
       },
+
+      // OPG Mobility
       {
         id = nextVehicleId + 3;
-        name = "City Glide";
-        brand = "Green Motors";
+        name = "FAAST F4";
+        brand = "OPG Mobility";
         category = "Scooter";
-        range_km = 70;
-        top_speed = 40;
-        battery_kwh = 2.0;
+        range_km = 162;
+        top_speed = 70;
+        battery_kwh = 4.4;
         charging_hours = 4.0;
-        price_min = 70000;
-        price_max = 85000;
-        motor_watts = 1000;
-        brakes = "Drum";
-        suspension = "Hydraulic";
-        warranty = "2 Years";
-        description = "Smooth and silent scooter for daily errands.";
-        is_featured = false;
+        price_min = 109999;
+        price_max = 120000;
+        motor_watts = 3000;
+        brakes = "Dual Disc with CBS";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "OPG FAAST F4 — the most powerful in the FAAST series with LFP battery, 162 km range and 70 kmph top speed.";
+        is_featured = true;
       },
       {
         id = nextVehicleId + 4;
-        name = "Power Trekker";
-        brand = "eBikePro";
-        category = "Electric Bike";
-        range_km = 150;
-        top_speed = 35;
-        battery_kwh = 2.8;
-        charging_hours = 4.2;
-        price_min = 80000;
-        price_max = 95000;
-        motor_watts = 750;
-        brakes = "Disc + V-Brake";
-        suspension = "Full Suspension";
-        warranty = "2 Years";
-        description = "Efficient and high-performing electric bike for all terrains.";
-        is_featured = true;
+        name = "FAAST F3";
+        brand = "OPG Mobility";
+        category = "Scooter";
+        range_km = 130;
+        top_speed = 70;
+        battery_kwh = 3.53;
+        charging_hours = 4.0;
+        price_min = 104999;
+        price_max = 115000;
+        motor_watts = 2500;
+        brakes = "Dual Disc";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "OPG FAAST F3 with LFP battery delivers 130 km range and 70 kmph — ideal for long-distance daily commuters.";
+        is_featured = false;
       },
       {
         id = nextVehicleId + 5;
-        name = "Swift Commuter";
-        brand = "VoltCycle";
-        category = "E-Bike";
-        range_km = 110;
-        top_speed = 22;
-        battery_kwh = 1.8;
+        name = "DEFY 22";
+        brand = "OPG Mobility";
+        category = "Scooter";
+        range_km = 100;
+        top_speed = 70;
+        battery_kwh = 2.5;
         charging_hours = 3.5;
-        price_min = 52000;
-        price_max = 58000;
-        motor_watts = 350;
-        brakes = "V-Brakes";
-        suspension = "Front Fork";
-        warranty = "1 Year";
-        description = "Secure and comfortable ride for everyday use.";
+        price_min = 99999;
+        price_max = 110000;
+        motor_watts = 2200;
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "The DEFY 22 is OPG`s bold new entrant — sporty styling, LFP battery, 100 km range.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 6;
+        name = "FREEDUM LI";
+        brand = "OPG Mobility";
+        category = "Scooter";
+        range_km = 75;
+        top_speed = 25;
+        battery_kwh = 1.5;
+        charging_hours = 3.0;
+        price_min = 69999;
+        price_max = 78000;
+        motor_watts = 250;
+        brakes = "Drum Front and Rear";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "2 Years Battery, 1 Year Motor";
+        description = "FREEDUM LI — affordable low-speed LFP scooter for budget-conscious commuters who need reliability and range.";
+        is_featured = false;
+      },
+
+      // Battre
+      {
+        id = nextVehicleId + 7;
+        name = "ONE";
+        brand = "Battre";
+        category = "Scooter";
+        range_km = 90;
+        top_speed = 60;
+        battery_kwh = 2.0;
+        charging_hours = 3.5;
+        price_min = 79999;
+        price_max = 90000;
+        motor_watts = 1500;
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Batt:RE ONE — IP67 waterproof detachable battery, 90 km range and classic design. India`s stylish city commuter.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 8;
+        name = "EPIC";
+        brand = "Battre";
+        category = "Scooter";
+        range_km = 103;
+        top_speed = 60;
+        battery_kwh = 2.5;
+        charging_hours = 3.0;
+        price_min = 99999;
+        price_max = 112000;
+        motor_watts = 1500;
+        brakes = "Disc";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Batt:RE EPIC — metal body, 103 km range, LCD screen and a premium look for riders who want style with substance.";
+        is_featured = true;
+      },
+      {
+        id = nextVehicleId + 9;
+        name = "Loev+";
+        brand = "Battre";
+        category = "Scooter";
+        range_km = 132;
+        top_speed = 60;
+        battery_kwh = 3.2;
+        charging_hours = 3.0;
+        price_min = 114999;
+        price_max = 128000;
+        motor_watts = 1800;
+        brakes = "Dual Disc";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Batt:RE Loev+ — metal body, 132 km range, 5-inch TFT Smart Bluetooth display. The premium flagship from Batt:RE.";
+        is_featured = true;
+      },
+
+      // Revolt Motors
+      {
+        id = nextVehicleId + 10;
+        name = "RV1";
+        brand = "Revolt Motors";
+        category = "Bike";
+        range_km = 100;
+        top_speed = 65;
+        battery_kwh = 2.2;
+        charging_hours = 2.25;
+        price_min = 99999;
+        price_max = 105000;
+        motor_watts = 2800;
+        brakes = "Disc Front and Rear";
+        suspension = "Telescopic Fork, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Revolt RV1 — India`s most affordable electric motorcycle with 2.8 kW motor, 100 km range and MyRevolt app connectivity.";
+        is_featured = true;
+      },
+      {
+        id = nextVehicleId + 11;
+        name = "RV400";
+        brand = "Revolt Motors";
+        category = "Bike";
+        range_km = 150;
+        top_speed = 85;
+        battery_kwh = 3.24;
+        charging_hours = 3.5;
+        price_min = 104990;
+        price_max = 118000;
+        motor_watts = 2800;
+        brakes = "Dual Disc";
+        suspension = "Telescopic Fork, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Revolt RV400 — India`s most award-winning electric motorcycle. 3.24 kWh battery, 150 km range, 80-minute fast charge.";
+        is_featured = true;
+      },
+
+      // Kinetic Green
+      {
+        id = nextVehicleId + 12;
+        name = "E-Luna X3 Prime";
+        brand = "Kinetic Green";
+        category = "Bike";
+        range_km = 110;
+        top_speed = 50;
+        battery_kwh = 2.0;
+        charging_hours = 4.0;
+        price_min = 84290;
+        price_max = 95000;
+        motor_watts = 1200;
+        brakes = "Drum Front and Rear";
+        suspension = "Front Telescopic, Rear Dual Shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Kinetic Green E-Luna X3 Prime — modern take on the classic Luna with digital color cluster, LED headlamp and 110 km range.";
+        is_featured = true;
+      },
+      {
+        id = nextVehicleId + 13;
+        name = "E-Luna X2";
+        brand = "Kinetic Green";
+        category = "Bike";
+        range_km = 80;
+        top_speed = 45;
+        battery_kwh = 1.8;
+        charging_hours = 4.0;
+        price_min = 69990;
+        price_max = 80000;
+        motor_watts = 1000;
+        brakes = "Drum";
+        suspension = "Front Telescopic, Rear Dual Shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Kinetic Green E-Luna X2 — the entry-level E-Luna. Affordable, practical and nostalgic.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 14;
+        name = "E-Zulu";
+        brand = "Kinetic Green";
+        category = "Scooter";
+        range_km = 100;
+        top_speed = 55;
+        battery_kwh = 2.5;
+        charging_hours = 4.0;
+        price_min = 79990;
+        price_max = 90000;
+        motor_watts = 1500;
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Kinetic Green E-Zulu — sleek, powerful scooter with strong range and modern styling for city and suburban use.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 15;
+        name = "Zoom";
+        brand = "Kinetic Green";
+        category = "Scooter";
+        range_km = 70;
+        top_speed = 45;
+        battery_kwh = 1.8;
+        charging_hours = 4.0;
+        price_min = 70481;
+        price_max = 80000;
+        motor_watts = 1000;
+        brakes = "Drum";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "2 Years Battery, 1 Year Motor";
+        description = "Kinetic Green Zoom — smart low-maintenance scooter for senior riders and short-trip commuters with 70 km range.";
+        is_featured = false;
+      },
+
+      // Goeen
+      {
+        id = nextVehicleId + 16;
+        name = "Chalo 1000 V2";
+        brand = "Goeen";
+        category = "Scooter";
+        range_km = 100;
+        top_speed = 55;
+        battery_kwh = 2.2;
+        charging_hours = 4.0;
+        price_min = 85000;
+        price_max = 98000;
+        motor_watts = 1000;
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "Goeen Chalo 1000 V2 — high-speed lithium scooter with 100 km range. The performance upgrade in the Chalo lineup.";
+        is_featured = true;
+      },
+      {
+        id = nextVehicleId + 17;
+        name = "Chalo Smart Pro";
+        brand = "Goeen";
+        category = "Scooter";
+        range_km = 80;
+        top_speed = 25;
+        battery_kwh = 1.5;
+        charging_hours = 4.0;
+        price_min = 72000;
+        price_max = 82000;
+        motor_watts = 250;
+        brakes = "Drum";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "2 Years Battery, 1 Year Motor";
+        description = "Goeen Chalo Smart Pro — feature-rich low-speed scooter with 80 km range and urban-friendly speed.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 18;
+        name = "Chalo Smart Eco";
+        brand = "Goeen";
+        category = "Scooter";
+        range_km = 130;
+        top_speed = 25;
+        battery_kwh = 2.5;
+        charging_hours = 5.0;
+        price_min = 68000;
+        price_max = 78000;
+        motor_watts = 250;
+        brakes = "Drum";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "2 Years Battery, 1 Year Motor";
+        description = "Goeen Chalo Smart Eco — the longest-range low-speed scooter in the Goeen lineup. 130 km range for maximum efficiency.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 19;
+        name = "NJA-7";
+        brand = "Goeen";
+        category = "Scooter";
+        range_km = 130;
+        top_speed = 25;
+        battery_kwh = 2.5;
+        charging_hours = 5.0;
+        price_min = 70000;
+        price_max = 80000;
+        motor_watts = 250;
+        brakes = "Drum";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "2 Years Battery, 1 Year Motor";
+        description = "Goeen NJA-7 — bold-styled low-speed scooter with 130 km range and rugged urban presence.";
+        is_featured = false;
+      },
+
+      // iVOOMi
+      {
+        id = nextVehicleId + 20;
+        name = "ZeetX ZE";
+        brand = "iVOOMi";
+        category = "Scooter";
+        range_km = 100;
+        top_speed = 60;
+        battery_kwh = 2.5;
+        charging_hours = 4.0;
+        price_min = 88000;
+        price_max = 100000;
+        motor_watts = 2000;
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Mono-shock";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "iVOOMi ZeetX ZE — smart, connected and powerful. The flagship scooter from iVOOMi with IoT features and strong city range.";
+        is_featured = true;
+      },
+      {
+        id = nextVehicleId + 21;
+        name = "S1 Lite";
+        brand = "iVOOMi";
+        category = "Scooter";
+        range_km = 80;
+        top_speed = 50;
+        battery_kwh = 2.0;
+        charging_hours = 4.0;
+        price_min = 72000;
+        price_max = 82000;
+        motor_watts = 1500;
+        brakes = "Disc Front, Drum Rear";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "3 Years Battery, 2 Years Motor";
+        description = "iVOOMi S1 Lite — lightweight, efficient and affordable. A reliable everyday scooter with clean design.";
+        is_featured = false;
+      },
+      {
+        id = nextVehicleId + 22;
+        name = "Eco+";
+        brand = "iVOOMi";
+        category = "Scooter";
+        range_km = 70;
+        top_speed = 45;
+        battery_kwh = 1.5;
+        charging_hours = 3.5;
+        price_min = 60000;
+        price_max = 70000;
+        motor_watts = 1200;
+        brakes = "Drum";
+        suspension = "Front Telescopic, Rear Spring";
+        warranty = "2 Years Battery, 1 Year Motor";
+        description = "iVOOMi Eco+ — the budget-friendly entry into electric mobility. Simple, practical and efficient for daily city use.";
         is_featured = false;
       },
     ]);
 
     for (vehicle in vehicleList.values()) {
       vehicles.add(vehicle.id, vehicle);
-      nextVehicleId += 1;
     };
+    nextVehicleId += vehicleList.size();
 
-    // Blog Posts
     let blogPostList = List.fromArray<BlogPost>([
       {
         id = nextBlogPostId;
@@ -483,8 +795,8 @@ actor {
 
     for (post in blogPostList.values()) {
       blogPosts.add(post.id, post);
-      nextBlogPostId += 1;
     };
+    nextBlogPostId += blogPostList.size();
 
     initialized := true;
   };

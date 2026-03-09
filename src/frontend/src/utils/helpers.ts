@@ -1,4 +1,18 @@
-export function getVehicleImage(id: bigint): string {
+export function getBrandImage(brand: string): string {
+  const map: Record<string, string> = {
+    Dynamo: "/assets/generated/brand-dynamo.dim_600x400.jpg",
+    "OPG Mobility": "/assets/generated/brand-opg.dim_600x400.jpg",
+    Battre: "/assets/generated/brand-battre.dim_600x400.jpg",
+    "Revolt Motors": "/assets/generated/brand-revolt.dim_600x400.jpg",
+    "Kinetic Green": "/assets/generated/brand-kinetic.dim_600x400.jpg",
+    Goeen: "/assets/generated/brand-goeen.dim_600x400.jpg",
+    iVOOMi: "/assets/generated/brand-ivoomi.dim_600x400.jpg",
+  };
+  return map[brand] ?? "/assets/generated/vehicle-scooter-1.dim_600x400.jpg";
+}
+
+export function getVehicleImage(id: bigint, brand?: string): string {
+  if (brand) return getBrandImage(brand);
   const numId = Number(id);
   if (numId <= 2) return "/assets/generated/vehicle-scooter-1.dim_600x400.jpg";
   if (numId <= 4) return "/assets/generated/vehicle-scooter-2.dim_600x400.jpg";

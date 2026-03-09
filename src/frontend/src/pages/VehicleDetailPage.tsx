@@ -174,7 +174,7 @@ export default function VehicleDetailPage() {
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <img
-                src={getVehicleImage(vehicle.id)}
+                src={getVehicleImage(vehicle.id, vehicle.brand)}
                 alt={vehicle.name}
                 className="w-full rounded-2xl object-cover h-72 lg:h-96 shadow-card-hover"
               />
