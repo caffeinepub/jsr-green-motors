@@ -220,3 +220,35 @@
     );
   }
 }
+
+/* Scroll-triggered reveal animations */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-on-scroll {
+  opacity: 0;
+}
+
+.reveal-on-scroll.is-visible {
+  animation: reveal-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@layer utilities {
+  .bg-brand-light-gray {
+    background-color: oklch(0.96 0.004 145);
+  }
+  .shadow-green-glow-sm {
+    box-shadow: 0 0 20px oklch(0.62 0.19 155 / 0.15);
+  }
+  .shadow-card-hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+}

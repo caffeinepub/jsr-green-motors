@@ -187,11 +187,21 @@ export default function VehicleDetailPage() {
               <img
                 src={getVehicleImage(vehicle.id, vehicle.brand, vehicle.name)}
                 alt={vehicle.name}
-                className="w-full rounded-2xl object-cover h-72 lg:h-96 shadow-card-hover"
+                className="w-full rounded-2xl object-contain shadow-card-hover"
+                style={{
+                  maxHeight: "480px",
+                  minHeight: "240px",
+                  background: "oklch(0.12 0.01 145)",
+                }}
               />
               <Badge className="absolute top-4 left-4 bg-brand-green text-white border-0">
                 {vehicle.category}
               </Badge>
+              <img
+                src="/assets/uploads/JSR_LOGO-2.png"
+                alt="JSR"
+                className="absolute bottom-3 right-3 w-10 h-10 object-contain opacity-60 pointer-events-none"
+              />
             </div>
             <div>
               <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider mb-2">
@@ -362,6 +372,24 @@ export default function VehicleDetailPage() {
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">
                     *Indicative only. Actual rates may vary.
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <div className="bg-background border border-border rounded-xl p-4 text-center">
+                    <div className="text-xs text-muted-foreground mb-1">
+                      Total Amount Payable
+                    </div>
+                    <div className="text-xl font-bold text-foreground">
+                      ₹{(emi * tenure).toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
+                    <div className="text-xs text-muted-foreground mb-1">
+                      Total Interest Payable
+                    </div>
+                    <div className="text-xl font-bold text-amber-500">
+                      ₹{(emi * tenure - loanAmount).toLocaleString("en-IN")}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAddCallbackRequest, useFeaturedVehicles } from "@/hooks/useQueries";
-import { formatPrice, getVehicleImage } from "@/utils/helpers";
+import { calculateEMI, formatPrice, getVehicleImage } from "@/utils/helpers";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -27,6 +27,7 @@ import {
   Check,
   ChevronRight,
   Gauge,
+  GraduationCap,
   Handshake,
   HeartHandshake,
   Loader2,
@@ -37,6 +38,7 @@ import {
   Ruler,
   Settings,
   Star,
+  TrendingUp,
   Wrench,
   Zap,
 } from "lucide-react";
@@ -48,21 +50,33 @@ const services = [
     icon: Zap,
     title: "EV Sales",
     desc: "Wide range of electric scooters & bikes from leading brands.",
+    extra: "20+ brands, 100+ models",
+    topBorder: "border-t-brand-green",
+    topBorderStyle: { borderTopColor: "oklch(0.62 0.19 155)" },
   },
   {
     icon: Wrench,
     title: "Service & Maintenance",
     desc: "Battery diagnostics, controller service, upgrades & repairs.",
+    extra: "Same-day diagnostics available",
+    topBorder: "border-t-blue-500",
+    topBorderStyle: { borderTopColor: "#3b82f6" },
   },
   {
     icon: RefreshCw,
     title: "EV Conversion",
     desc: "Convert your petrol vehicle into a modern electric vehicle.",
+    extra: "Starting from \u20b925,000",
+    topBorder: "border-t-orange-500",
+    topBorderStyle: { borderTopColor: "#f97316" },
   },
   {
     icon: Handshake,
     title: "Franchise",
     desc: "Join our growing network and build your EV business.",
+    extra: "Low investment, high margins",
+    topBorder: "border-t-purple-500",
+    topBorderStyle: { borderTopColor: "#a855f7" },
   },
 ];
 
@@ -70,7 +84,7 @@ const benefits = [
   {
     icon: Award,
     title: "Multi-Brand Expertise",
-    desc: "We offer multiple EV brands under one roof — more choice, better value.",
+    desc: "We offer multiple EV brands under one roof \u2014 more choice, better value.",
   },
   {
     icon: MapPin,
@@ -85,7 +99,7 @@ const benefits = [
   {
     icon: HeartHandshake,
     title: "End-to-End Support",
-    desc: "From purchase to service to upgrades — we're with you every step.",
+    desc: "From purchase to service to upgrades \u2014 we're with you every step.",
   },
 ];
 
@@ -100,7 +114,7 @@ const brandAuthority = [
   },
   {
     title: "Long-term service support",
-    desc: "We stay with you after the sale — service, upgrades, spares.",
+    desc: "We stay with you after the sale \u2014 service, upgrades, spares.",
   },
   {
     title: "Local trust & network",
@@ -109,32 +123,123 @@ const brandAuthority = [
 ];
 
 const franchiseBenefits = [
-  "Strong supplier network with 20+ brands",
-  "Comprehensive technical training support",
-  "Marketing & branding assistance",
-  "Attractive margins & growth potential",
+  {
+    icon: TrendingUp,
+    title: "Strong Supplier Network",
+    desc: "Access to 20+ EV brands, ensuring variety and competitive pricing for your customers.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Technical Training Support",
+    desc: "Comprehensive EV servicing and sales training provided by certified JSR experts.",
+  },
+  {
+    icon: Zap,
+    title: "Marketing & Branding",
+    desc: "Full JSR branding, marketing collateral, and digital presence support included.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Attractive Margins",
+    desc: "High profit margins with a proven business model and growing EV demand across Telangana.",
+  },
 ];
 
 const testimonials = [
   {
     name: "Ravi Kumar",
     city: "Kodad",
+    vehicle: "Dynamo RX1",
     quote:
-      "Best EV showroom in Telangana. Bought my scooter here 6 months ago and the service support is excellent.",
+      "Best EV showroom in Telangana. Bought my Dynamo RX1 six months ago and the service support is excellent. Saving around \u20b92,500 per month on fuel!",
     rating: 5,
   },
   {
     name: "Priya Reddy",
     city: "Suryapet",
+    vehicle: "Batt:RE ONE",
     quote:
-      "The team helped me compare 5 different brands honestly. No pressure at all. Happy with my purchase!",
+      "The team helped me compare 5 different brands honestly. No pressure at all. My Batt:RE ONE gets 90+ km per charge \u2014 perfect for my daily commute.",
     rating: 5,
   },
   {
     name: "Nagaraju M.",
     city: "Haliya",
+    vehicle: "EV Conversion",
     quote:
-      "Got my petrol bike converted to electric. Saving ₹3,000 per month on fuel. Highly recommend JSR Electric Vehicles.",
+      "Got my old Honda Activa converted to electric by JSR. Saving \u20b93,000 per month on fuel. Highly recommend JSR Electric Vehicles!",
+    rating: 5,
+  },
+  {
+    name: "Suresh Babu",
+    city: "Nalgonda",
+    vehicle: "Revolt RV400",
+    quote:
+      "The Revolt RV400 is an amazing bike. JSR gave me the best price and handled all RTO paperwork. Delivery was on time and hassle-free.",
+    rating: 5,
+  },
+  {
+    name: "Lakshmi Devi",
+    city: "Khammam",
+    vehicle: "Goeen Chalo",
+    quote:
+      "As a first-time EV buyer, I was nervous. The staff at JSR explained everything patiently. My Goeen Chalo is smooth and silent \u2014 love riding it!",
+    rating: 5,
+  },
+  {
+    name: "Venkatesh Rao",
+    city: "Munagala",
+    vehicle: "Dynamo Lima",
+    quote:
+      "Bought the Dynamo Lima for my wife. \u20b9500 per month on electricity vs \u20b93,500 on petrol earlier. The savings are incredible. Thank you JSR!",
+    rating: 5,
+  },
+  {
+    name: "Anitha Kumari",
+    city: "Warangal",
+    vehicle: "OPG FAAST F3",
+    quote:
+      "OPG FAAST F3 is my daily commute vehicle now. Excellent mileage, smooth ride, and JSR gave me an easy EMI option. Very happy customer!",
+    rating: 5,
+  },
+  {
+    name: "Kavitha Nair",
+    city: "Hyderabad",
+    vehicle: "Dynamo X1",
+    quote:
+      "Bought the Dynamo X1 for my daughter's college commute. The team at JSR is very trustworthy \u2014 they followed up even after purchase to check if everything is fine.",
+    rating: 5,
+  },
+  {
+    name: "Mohan Krishna",
+    city: "Miryalaguda",
+    vehicle: "OPG DEFY 22",
+    quote:
+      "EMI was arranged in just 3 days and the vehicle was delivered to my doorstep. The OPG DEFY 22 handles beautifully. Truly the best EV dealer in our area.",
+    rating: 5,
+  },
+  {
+    name: "Sreedhar Reddy",
+    city: "Vijayawada",
+    vehicle: "Revolt RV1+",
+    quote:
+      "I drove 100km from Vijayawada to test ride the Revolt RV1+ at JSR. Totally worth it! Best bike in its range and the price was unbeatable.",
+    rating: 5,
+  },
+  {
+    name: "Madhuri Pullaiah",
+    city: "Suryapet",
+    vehicle: "Kinetic E-Luna",
+    quote:
+      "The Kinetic E-Luna is perfect for my vegetable delivery business. Low running cost, great range. JSR team helped me get a commercial loan easily.",
+    rating: 5,
+  },
+  {
+    name: "Ramaiah Goud",
+    city: "Nalgonda",
+    vehicle: "iVOOMi S1 Lite",
+    quote:
+      "iVOOMi S1 Lite from JSR is my best investment. \u20b9350 charging cost vs \u20b93,200 petrol monthly. JSR team provided after-sales service with zero issues.",
     rating: 5,
   },
 ];
@@ -142,29 +247,51 @@ const testimonials = [
 const faqs = [
   {
     q: "What brands of electric vehicles do you sell?",
-    a: "We stock multiple brands of electric scooters and bikes, offering the widest selection in the Kodad-Suryapet region. Visit our showroom or call us at +91 9948955517 to see the full range.",
+    a: "We stock Dynamo, OPG Mobility, Batt:RE, Revolt Motors, Kinetic Green, Goeen, and iVOOMi \u2014 7 premium EV brands with 50+ models under one roof. We are the widest multi-brand EV showroom in the Kodad-Suryapet region. Call +91 9948955517 or visit us to see the full range.",
   },
   {
     q: "Do you offer test rides?",
-    a: "Yes, free test rides are available at our showroom. Call +91 9948955517 or use the 'Book Free Test Ride' button to schedule yours.",
+    a: "Yes, free test rides are available at our showroom in Kodad. Simply call +91 9948955517, WhatsApp us, or click 'Book Free Test Ride' to schedule yours. Test rides are available Monday to Saturday 9AM-7PM and Sunday 10AM-5PM.",
   },
   {
     q: "What is the cost of petrol to electric conversion?",
-    a: "Conversion packages start from ₹25,000 for basic scooters and go up to ₹60,000 for premium motorcycle conversions. Visit our Conversions page for full pricing details.",
+    a: "Conversion packages start from \u20b925,000 for basic scooters and go up to \u20b960,000 for premium motorcycle conversions. All kits are certified and include a 6-month to 2-year warranty. Visit our Conversions page or call us for a custom quote.",
   },
   {
     q: "Do you provide EMI financing?",
-    a: "Yes, we assist with bank financing and EMI options from leading banks. Our team will guide you through the process to make EV ownership affordable.",
+    a: "Yes, we work with leading banks to offer flexible EMI options starting from as low as \u20b91,500/month. Our team will guide you through documentation, loan approval, and delivery \u2014 usually within 3-5 working days.",
   },
   {
     q: "Where are your showrooms located?",
-    a: "Head Branch: Suryapet road, beside Kashinadam function hall, Kodad, Suryapet district, Telangana-508206. Branch 2: Haliya (coming soon).",
+    a: "Head Office: Suryapet road, beside Kashinadam function hall, Kodad, Suryapet District, Telangana-508206. We also have branches in Haliya (Nalgonda Dist), Suryapet Town, and Munagala. Call each branch directly or visit us for assistance.",
   },
   {
     q: "What warranty do you provide?",
-    a: "All new vehicles come with manufacturer warranty. EV conversions carry 6-month to 2-year warranty depending on the package selected. Ask our team for details.",
+    a: "All new vehicles come with manufacturer warranty \u2014 typically 2-3 years on battery and 1-2 years on motor. EV conversions carry 6-month to 2-year warranty depending on the kit selected. JSR Electric Vehicles also provides after-sales service throughout the warranty period.",
+  },
+  {
+    q: "How long does EV conversion take?",
+    a: "A standard petrol-to-electric conversion takes 3-7 working days depending on the vehicle type and kit selected. We keep you updated throughout the process. Drop your vehicle at our Kodad workshop and we'll handle everything including RTO re-registration assistance.",
+  },
+  {
+    q: "Do you offer home test rides?",
+    a: "Yes! For customers within 30km of our Kodad showroom, we offer doorstep test ride delivery for select models. Call +91 9948955517 to check eligibility for your area. Standard showroom test rides are always free and available daily.",
   },
 ];
+
+// WhatsApp SVG icon component
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+  );
+}
 
 export default function HomePage() {
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -184,7 +311,6 @@ export default function HomePage() {
   useEffect(() => {
     document.title =
       "Best Electric Scooters & EV Conversion in Telangana | JSR Electric Vehicles";
-    // Set meta description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (!metaDesc) {
       metaDesc = document.createElement("meta");
@@ -206,7 +332,6 @@ export default function HomePage() {
       await callbackMutation.mutateAsync(callbackForm);
       setCallbackSuccess(true);
       toast.success("Request submitted! Redirecting to WhatsApp...");
-      // Send lead details to WhatsApp +91 9948955517 (sales number)
       const msg = [
         "New Callback Request - JSR Electric Vehicles",
         callbackForm.name ? `Name: ${callbackForm.name}` : "",
@@ -246,9 +371,9 @@ export default function HomePage() {
               "url('/assets/generated/hero-ev-banner.dim_1600x700.jpg')",
           }}
         />
-        {/* Cinematic overlay: deep vignette + green bloom */}
+        {/* Cinematic overlay */}
         <div className="hero-overlay absolute inset-0 z-[1]" />
-        {/* Green edge-light accent — right side */}
+        {/* Green edge-light accent */}
         <div
           className="absolute inset-y-0 right-0 w-1/3 z-[1] pointer-events-none"
           style={{
@@ -291,7 +416,9 @@ export default function HomePage() {
               Conversion | Franchise Opportunities
             </p>
 
+            {/* CTA buttons with clear hierarchy */}
             <div className="hero-cta-animate flex flex-wrap gap-3 mb-6">
+              {/* PRIMARY: solid green */}
               <button
                 type="button"
                 onClick={scrollToLeadForm}
@@ -304,6 +431,7 @@ export default function HomePage() {
               >
                 Book Free Test Ride <ChevronRight className="h-4 w-4" />
               </button>
+              {/* SECONDARY: outlined white */}
               <Link to="/vehicles">
                 <Button
                   size="lg"
@@ -314,15 +442,13 @@ export default function HomePage() {
                   Get Best Price
                 </Button>
               </Link>
-              <Link to="/conversions">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-brand-green/50 text-brand-green hover:bg-brand-green/10 hover:border-brand-green active:scale-95 px-7 py-3 text-base bg-brand-green/5 backdrop-blur-sm transition-all duration-200"
-                  data-ocid="hero.convert_button"
-                >
-                  Convert to Electric
-                </Button>
+              {/* TERTIARY: text link with arrow */}
+              <Link
+                to="/conversions"
+                className="inline-flex items-center gap-1.5 text-white/75 hover:text-white text-base font-medium transition-colors px-2 py-3"
+                data-ocid="hero.link"
+              >
+                Convert to Electric <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
@@ -343,12 +469,13 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Stats row */}
+            {/* Stats row — 4 items */}
             <div className="hero-stats-animate flex flex-wrap gap-8 mt-10 pt-8 border-t border-white/15">
               {[
                 { value: "20+", label: "Brands" },
                 { value: "500+", label: "Happy Customers" },
                 { value: "5+", label: "Years Experience" },
+                { value: "20+", label: "Dealers" },
               ].map((stat) => (
                 <div key={stat.label}>
                   <div
@@ -375,166 +502,223 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Lead Capture Form */}
-      <section className="py-14 bg-brand-light-gray" ref={leadFormRef}>
+      {/* Lead Capture Form — dark background with trust points */}
+      <section
+        ref={leadFormRef}
+        className="py-14"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.08 0.01 145) 0%, oklch(0.12 0.03 155) 100%)",
+        }}
+      >
         <div className="container mx-auto px-4 lg:px-6">
-          <div
-            className="max-w-2xl mx-auto rounded-2xl p-8"
-            style={{
-              background: "oklch(1 0 0)",
-              boxShadow:
-                "0 0 0 2px oklch(0.62 0.19 155 / 0.35), 0 20px 50px rgba(0,0,0,0.12)",
-            }}
-          >
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-brand-green/10 border border-brand-green/25">
+          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+            {/* Left column — trust points */}
+            <div className="text-white">
+              <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 rounded-full bg-brand-green/15 border border-brand-green/30">
                 <span className="w-2 h-2 rounded-full bg-brand-green animate-pulse" />
                 <span className="text-brand-green text-xs font-semibold uppercase tracking-wider">
                   Our EV Expert Will Call You Shortly
                 </span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+              <h2 className="text-2xl md:text-3xl font-display font-bold mb-6">
                 Get a Callback in 10 Minutes
               </h2>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-xl mt-0.5">⚡</span>
+                  <div>
+                    <div className="font-semibold text-white">
+                      Response within 10 minutes
+                    </div>
+                    <div className="text-white/55 text-sm">
+                      Our EV experts respond fast \u2014 no long waits.
+                    </div>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl mt-0.5">✓</span>
+                  <div>
+                    <div className="font-semibold text-white">
+                      No spam, no pressure
+                    </div>
+                    <div className="text-white/55 text-sm">
+                      We respect your time. Honest advice only.
+                    </div>
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-xl mt-0.5">📍</span>
+                  <div>
+                    <div className="font-semibold text-white">
+                      Serving 20+ locations across Telangana
+                    </div>
+                    <div className="text-white/55 text-sm">
+                      From Kodad to Hyderabad \u2014 we're near you.
+                    </div>
+                  </div>
+                </li>
+              </ul>
+              <div className="mt-6 flex items-center gap-3">
+                <img
+                  src="/assets/uploads/JSR_LOGO-2.png"
+                  alt="JSR Electric Vehicles"
+                  className="h-10 w-auto object-contain opacity-80"
+                />
+                <span className="text-white/50 text-sm">
+                  JSR Electric Vehicles
+                </span>
+              </div>
             </div>
 
-            {callbackSuccess ? (
-              <div
-                className="text-center py-8"
-                data-ocid="lead_capture.success_state"
-              >
-                <div className="w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center mx-auto mb-4">
-                  <Check className="h-8 w-8 text-brand-green" />
-                </div>
-                <p className="text-foreground font-semibold text-lg mb-2">
-                  Thank you for contacting JSR Electric Vehicles.
-                </p>
-                <p className="text-muted-foreground">
-                  Our EV Expert will reach you shortly.
-                </p>
-                <Button
-                  onClick={() => {
-                    setCallbackSuccess(false);
-                    setCallbackForm({
-                      name: "",
-                      phone: "",
-                      city: "",
-                      interest: "",
-                    });
-                  }}
-                  variant="outline"
-                  className="mt-4 border-brand-green text-brand-green hover:bg-brand-green/10"
+            {/* Right column — form */}
+            <div
+              className="rounded-2xl p-6"
+              style={{
+                background: "oklch(1 0 0)",
+                boxShadow:
+                  "0 0 0 2px oklch(0.62 0.19 155 / 0.35), 0 20px 50px rgba(0,0,0,0.25)",
+              }}
+            >
+              {callbackSuccess ? (
+                <div
+                  className="text-center py-8"
+                  data-ocid="lead_capture.success_state"
                 >
-                  Submit Another Request
-                </Button>
-              </div>
-            ) : (
-              <form onSubmit={handleCallbackSubmit} className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-name">Full Name</Label>
-                    <Input
-                      id="cb-name"
-                      placeholder="Your name"
-                      value={callbackForm.name}
-                      onChange={(e) =>
-                        setCallbackForm((p) => ({
-                          ...p,
-                          name: e.target.value,
-                        }))
-                      }
-                      data-ocid="lead_capture.name_input"
-                    />
+                  <div className="w-16 h-16 rounded-full bg-brand-green/10 flex items-center justify-center mx-auto mb-4">
+                    <Check className="h-8 w-8 text-brand-green" />
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-phone">
-                      Phone <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="cb-phone"
-                      type="tel"
-                      placeholder="+91 XXXXX XXXXX"
-                      value={callbackForm.phone}
-                      onChange={(e) =>
-                        setCallbackForm((p) => ({
-                          ...p,
-                          phone: e.target.value,
-                        }))
-                      }
-                      required
-                      data-ocid="lead_capture.phone_input"
-                    />
-                  </div>
+                  <p className="text-foreground font-semibold text-lg mb-2">
+                    Thank you for contacting JSR Electric Vehicles.
+                  </p>
+                  <p className="text-muted-foreground">
+                    Our EV Expert will reach you shortly.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setCallbackSuccess(false);
+                      setCallbackForm({
+                        name: "",
+                        phone: "",
+                        city: "",
+                        interest: "",
+                      });
+                    }}
+                    variant="outline"
+                    className="mt-4 border-brand-green text-brand-green hover:bg-brand-green/10"
+                  >
+                    Submit Another Request
+                  </Button>
                 </div>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-city">City</Label>
-                    <Input
-                      id="cb-city"
-                      placeholder="Your city"
-                      value={callbackForm.city}
-                      onChange={(e) =>
-                        setCallbackForm((p) => ({
-                          ...p,
-                          city: e.target.value,
-                        }))
-                      }
-                      data-ocid="lead_capture.city_input"
-                    />
+              ) : (
+                <form onSubmit={handleCallbackSubmit} className="space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cb-name">Full Name</Label>
+                      <Input
+                        id="cb-name"
+                        placeholder="Your name"
+                        value={callbackForm.name}
+                        onChange={(e) =>
+                          setCallbackForm((p) => ({
+                            ...p,
+                            name: e.target.value,
+                          }))
+                        }
+                        data-ocid="lead_capture.name_input"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cb-phone">
+                        Phone <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="cb-phone"
+                        type="tel"
+                        placeholder="+91 XXXXX XXXXX"
+                        value={callbackForm.phone}
+                        onChange={(e) =>
+                          setCallbackForm((p) => ({
+                            ...p,
+                            phone: e.target.value,
+                          }))
+                        }
+                        required
+                        data-ocid="lead_capture.phone_input"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="cb-interest">
-                      Interested In <span className="text-destructive">*</span>
-                    </Label>
-                    <Select
-                      value={callbackForm.interest}
-                      onValueChange={(v) =>
-                        setCallbackForm((p) => ({ ...p, interest: v }))
-                      }
-                      required
-                    >
-                      <SelectTrigger
-                        id="cb-interest"
-                        data-ocid="lead_capture.interest_select"
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cb-city">City</Label>
+                      <Input
+                        id="cb-city"
+                        placeholder="Your city"
+                        value={callbackForm.city}
+                        onChange={(e) =>
+                          setCallbackForm((p) => ({
+                            ...p,
+                            city: e.target.value,
+                          }))
+                        }
+                        data-ocid="lead_capture.city_input"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="cb-interest">
+                        Interested In{" "}
+                        <span className="text-destructive">*</span>
+                      </Label>
+                      <Select
+                        value={callbackForm.interest}
+                        onValueChange={(v) =>
+                          setCallbackForm((p) => ({ ...p, interest: v }))
+                        }
+                        required
                       >
-                        <SelectValue placeholder="Select interest" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Buy EV">Buy EV</SelectItem>
-                        <SelectItem value="Convert Vehicle">
-                          Convert Vehicle
-                        </SelectItem>
-                        <SelectItem value="Franchise">Franchise</SelectItem>
-                        <SelectItem value="Service">Service</SelectItem>
-                      </SelectContent>
-                    </Select>
+                        <SelectTrigger
+                          id="cb-interest"
+                          data-ocid="lead_capture.interest_select"
+                        >
+                          <SelectValue placeholder="Select interest" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Buy EV">Buy EV</SelectItem>
+                          <SelectItem value="Convert Vehicle">
+                            Convert Vehicle
+                          </SelectItem>
+                          <SelectItem value="Franchise">Franchise</SelectItem>
+                          <SelectItem value="Service">Service</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </div>
-                <Button
-                  type="submit"
-                  disabled={callbackLoading}
-                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold text-base py-6 transition-all"
-                  style={{
-                    boxShadow: "0 0 20px oklch(0.62 0.19 155 / 0.3)",
-                  }}
-                  data-ocid="lead_capture.submit_button"
-                >
-                  {callbackLoading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    "Request Callback in 10 Minutes"
-                  )}
-                </Button>
-              </form>
-            )}
+                  <Button
+                    type="submit"
+                    disabled={callbackLoading}
+                    className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold text-base py-6 transition-all"
+                    style={{
+                      boxShadow: "0 0 20px oklch(0.62 0.19 155 / 0.3)",
+                    }}
+                    data-ocid="lead_capture.submit_button"
+                  >
+                    {callbackLoading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      "Request Callback in 10 Minutes"
+                    )}
+                  </Button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Services Overview */}
+      {/* Services Overview — 2x2 grid on desktop with colored borders */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
@@ -549,13 +733,17 @@ export default function HomePage() {
               service to conversion.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {services.map((svc) => {
               const Icon = svc.icon;
               return (
                 <div
                   key={svc.title}
                   className="bg-card border border-border rounded-2xl p-6 hover:border-brand-green/40 hover:shadow-green-glow-sm transition-all duration-300 group"
+                  style={{
+                    borderTop: "3px solid",
+                    ...svc.topBorderStyle,
+                  }}
                 >
                   <div className="w-12 h-12 rounded-xl bg-brand-green/10 flex items-center justify-center mb-4 group-hover:bg-brand-green/20 transition-colors">
                     <Icon className="h-6 w-6 text-brand-green" />
@@ -563,9 +751,12 @@ export default function HomePage() {
                   <h3 className="font-semibold text-foreground mb-2">
                     {svc.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-2">
                     {svc.desc}
                   </p>
+                  <span className="inline-block text-xs font-semibold text-brand-green bg-brand-green/10 px-2.5 py-1 rounded-full">
+                    {svc.extra}
+                  </span>
                 </div>
               );
             })}
@@ -613,96 +804,114 @@ export default function HomePage() {
             </div>
           ) : featuredVehicles && featuredVehicles.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredVehicles.slice(0, 6).map((vehicle) => (
-                <article
-                  key={vehicle.id.toString()}
-                  className="bg-card border border-border rounded-2xl overflow-hidden hover:border-brand-green/50 transition-all duration-300 group"
-                  style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow =
-                      "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px oklch(0.62 0.19 155 / 0.3)";
-                    (e.currentTarget as HTMLElement).style.transform =
-                      "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.boxShadow =
-                      "0 2px 8px rgba(0,0,0,0.06)";
-                    (e.currentTarget as HTMLElement).style.transform =
-                      "translateY(0)";
-                  }}
-                >
-                  {/* Image with gradient bleed into card body */}
-                  <div className="relative overflow-hidden h-52">
-                    <img
-                      src={getVehicleImage(vehicle.id, vehicle.brand)}
-                      alt={vehicle.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    {/* Category pill */}
-                    <div className="absolute top-3 left-3 flex gap-2">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-green/90 text-white backdrop-blur-sm">
-                        {vehicle.category}
-                      </span>
-                    </div>
-                    {/* Gradient bleed: image fades into card background */}
-                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card to-transparent" />
-                  </div>
-
-                  <div className="px-5 pb-5 -mt-1">
-                    <h3 className="font-bold text-foreground text-base leading-tight">
-                      {vehicle.name}
-                    </h3>
-                    <p className="text-muted-foreground text-xs mt-0.5 mb-4 font-medium uppercase tracking-wide">
-                      {vehicle.brand}
-                    </p>
-
-                    {/* Spec chips — pill background, not bare icons */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
-                        <Ruler className="h-3 w-3 text-brand-green" />
-                        {Number(vehicle.range_km)} km
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
-                        <Gauge className="h-3 w-3 text-brand-green" />
-                        {Number(vehicle.top_speed)} km/h
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
-                        <Battery className="h-3 w-3 text-brand-green" />
-                        {vehicle.battery_kwh} kWh
-                      </span>
-                    </div>
-
-                    {/* Price + CTA — clear hierarchy */}
-                    <div className="flex items-center justify-between pt-3 border-t border-border">
-                      <div>
-                        <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                          From
-                        </div>
-                        <div
-                          className="font-black text-xl font-display"
-                          style={{ color: "oklch(0.62 0.19 155)" }}
-                        >
-                          {formatPrice(vehicle.price_min)}
-                        </div>
+              {featuredVehicles.slice(0, 6).map((vehicle) => {
+                // Approximate starting EMI at 8.5% for 36 months
+                const emi = calculateEMI(
+                  Number(vehicle.price_min) * 0.8,
+                  8.5,
+                  36,
+                );
+                return (
+                  <article
+                    key={vehicle.id.toString()}
+                    className="bg-card border border-border rounded-2xl overflow-hidden hover:border-brand-green/50 transition-all duration-300 group"
+                    style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.boxShadow =
+                        "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px oklch(0.62 0.19 155 / 0.3)";
+                      (e.currentTarget as HTMLElement).style.transform =
+                        "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.boxShadow =
+                        "0 2px 8px rgba(0,0,0,0.06)";
+                      (e.currentTarget as HTMLElement).style.transform =
+                        "translateY(0)";
+                    }}
+                  >
+                    {/* Image */}
+                    <div className="relative overflow-hidden h-52">
+                      <img
+                        src={getVehicleImage(
+                          vehicle.id,
+                          vehicle.brand,
+                          vehicle.name,
+                        )}
+                        alt={vehicle.name}
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "/assets/uploads/JSR_LOGO-2.png";
+                        }}
+                      />
+                      <div className="absolute top-3 left-3 flex gap-2">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-green/90 text-white backdrop-blur-sm">
+                          {vehicle.category}
+                        </span>
                       </div>
-                      <Link
-                        to="/vehicles/$id"
-                        params={{ id: vehicle.id.toString() }}
-                      >
-                        <Button
-                          size="sm"
-                          className="bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white text-xs font-semibold px-4 transition-all duration-150"
-                          style={{
-                            boxShadow: "0 0 12px oklch(0.62 0.19 155 / 0.3)",
-                          }}
-                        >
-                          View Details →
-                        </Button>
-                      </Link>
+                      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card to-transparent" />
                     </div>
-                  </div>
-                </article>
-              ))}
+
+                    <div className="px-5 pb-5 -mt-1">
+                      <h3 className="font-bold text-foreground text-base leading-tight">
+                        {vehicle.name}
+                      </h3>
+                      <p className="text-muted-foreground text-xs mt-0.5 mb-4 font-medium uppercase tracking-wide">
+                        {vehicle.brand}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
+                          <Ruler className="h-3 w-3 text-brand-green" />
+                          {Number(vehicle.range_km)} km
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
+                          <Gauge className="h-3 w-3 text-brand-green" />
+                          {Number(vehicle.top_speed)} km/h
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
+                          <Battery className="h-3 w-3 text-brand-green" />
+                          {vehicle.battery_kwh} kWh
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 border-t border-border">
+                        <div>
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                            From
+                          </div>
+                          <div
+                            className="font-black text-xl font-display"
+                            style={{ color: "oklch(0.62 0.19 155)" }}
+                          >
+                            {formatPrice(vehicle.price_min)}
+                          </div>
+                          {emi > 0 && (
+                            <div className="text-xs text-muted-foreground mt-0.5">
+                              Starting EMI from \u20b9
+                              {emi.toLocaleString("en-IN")}/mo
+                            </div>
+                          )}
+                        </div>
+                        <Link
+                          to="/vehicles/$id"
+                          params={{ id: vehicle.id.toString() }}
+                        >
+                          <Button
+                            size="sm"
+                            className="bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white text-xs font-semibold px-4 transition-all duration-150"
+                            style={{
+                              boxShadow: "0 0 12px oklch(0.62 0.19 155 / 0.3)",
+                            }}
+                          >
+                            View Details →
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           ) : (
             <div className="flex items-center justify-center py-12">
@@ -710,21 +919,22 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="text-center mt-8 md:hidden">
+          {/* Full-width solid green View All Vehicles button */}
+          <div className="mt-8">
             <Link to="/vehicles">
               <Button
-                variant="outline"
-                className="border-brand-green text-brand-green hover:bg-brand-green/10"
+                className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold text-base py-6"
+                style={{ boxShadow: "0 0 20px oklch(0.62 0.19 155 / 0.25)" }}
                 data-ocid="featured_vehicles.view_all_button"
               >
-                View All Vehicles <ArrowRight className="h-4 w-4 ml-1" />
+                View All Vehicles <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Why Choose Us — merged with Our Difference */}
       <section className="py-20 section-gradient">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
@@ -734,71 +944,60 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-3">
               Why Choose Us?
             </h2>
-            <p className="text-white/60 max-w-xl mx-auto">
-              We're not just an EV dealership — we're your complete electric
-              mobility partner.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit) => {
-              const Icon = benefit.icon;
-              return (
-                <div
-                  key={benefit.title}
-                  className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/8 hover:border-brand-green/30 transition-all duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-brand-green/15 flex items-center justify-center mb-4">
-                    <Icon className="h-6 w-6 text-brand-green" />
-                  </div>
-                  <h3 className="font-semibold text-white mb-2">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-white/55 text-sm leading-relaxed">
-                    {benefit.desc}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Brand Authority Block */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4 lg:px-6">
-          <div className="text-center mb-12">
-            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-              Our Difference
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
-              Why JSR Electric Vehicles?
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg font-medium">
+            <p className="text-white/60 max-w-2xl mx-auto text-lg font-medium">
               We Are Not Just a Dealer.{" "}
               <span className="text-brand-green">
                 We Are Electric Mobility Specialists.
               </span>
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
-            {brandAuthority.map((item) => (
-              <div
-                key={item.title}
-                className="flex gap-4 p-5 rounded-2xl bg-card border border-border hover:border-brand-green/40 transition-all duration-300"
-              >
-                <div className="w-8 h-8 rounded-full bg-brand-green flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="h-4 w-4 text-white" />
+          <div className="grid md:grid-cols-2 gap-10 items-start max-w-5xl mx-auto">
+            {/* Left: 4 icon+text cards in 2x2 grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {benefits.map((benefit) => {
+                const Icon = benefit.icon;
+                return (
+                  <div
+                    key={benefit.title}
+                    className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/8 hover:border-brand-green/30 transition-all duration-300"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-brand-green/15 flex items-center justify-center mb-3">
+                      <Icon className="h-5 w-5 text-brand-green" />
+                    </div>
+                    <h3 className="font-semibold text-white mb-1 text-sm">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-white/55 text-xs leading-relaxed">
+                      {benefit.desc}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            {/* Right: checklist */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-white mb-6">
+                Our Difference
+              </h3>
+              {brandAuthority.map((item) => (
+                <div
+                  key={item.title}
+                  className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-green/40 transition-all duration-300"
+                >
+                  <div className="w-7 h-7 rounded-full bg-brand-green flex items-center justify-center shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white mb-1 text-sm">
+                      {item.title}
+                    </h4>
+                    <p className="text-white/55 text-xs leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -844,25 +1043,39 @@ export default function HomePage() {
                   </span>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-2xl bg-brand-dark flex items-center justify-center p-6 group flex-1">
-                <div className="text-center">
-                  <img
-                    src="/assets/uploads/dynamo-lima-light-green-electric-scooter-500x500-removebg-preview-3.png"
-                    alt="Featured electric scooter at JSR Electric Vehicles"
-                    className="h-28 w-auto object-contain mx-auto mb-3 group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <p className="text-brand-green font-semibold text-sm">
-                    Latest Models In-Store
-                  </p>
+              {/* Address + Get Directions */}
+              <div
+                className="rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
+                style={{
+                  background: "oklch(0.12 0.02 155)",
+                  border: "1px solid oklch(0.62 0.19 155 / 0.2)",
+                }}
+              >
+                <div>
+                  <div className="text-brand-green font-semibold text-sm mb-1">
+                    JSR Electric Vehicles \u2014 Kodad
+                  </div>
+                  <div className="text-white/60 text-xs leading-relaxed">
+                    Suryapet road, beside Kashinadam function hall,
+                    <br />
+                    Kodad, Suryapet Dist, Telangana\u2013508206
+                  </div>
                 </div>
+                <a
+                  href="https://www.google.com/maps?q=16.9980,79.9730"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 inline-flex items-center gap-1.5 bg-brand-green hover:bg-brand-green/90 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors"
+                >
+                  <MapPin className="h-3.5 w-3.5" /> Get Directions
+                </a>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials — 3-column grid */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
@@ -890,7 +1103,7 @@ export default function HomePage() {
                   ))}
                 </div>
                 <p className="text-foreground text-sm leading-relaxed mb-5 italic">
-                  "{t.quote}"
+                  &quot;{t.quote}&quot;
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-brand-green/15 flex items-center justify-center text-brand-green font-bold text-sm">
@@ -901,7 +1114,7 @@ export default function HomePage() {
                       {t.name}
                     </div>
                     <div className="text-muted-foreground text-xs">
-                      {t.city}
+                      {t.vehicle} · {t.city}
                     </div>
                   </div>
                 </div>
@@ -943,9 +1156,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Conversion Promo */}
-      <section className="py-20 green-gradient relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
+      {/* EV Conversion Promo — dark green-to-black gradient */}
+      <section
+        className="py-20 relative overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.08 0.01 145) 0%, oklch(0.14 0.08 155) 50%, oklch(0.06 0.01 145) 100%)",
+        }}
+      >
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
           <div className="absolute top-10 right-10 w-64 h-64 rounded-full bg-brand-green blur-3xl" />
           <div className="absolute bottom-10 left-10 w-48 h-48 rounded-full bg-brand-green blur-3xl" />
         </div>
@@ -957,7 +1176,7 @@ export default function HomePage() {
             Still Riding Petrol?
           </h2>
           <p className="text-2xl md:text-3xl text-brand-green font-bold mb-4">
-            Switch to Electric & Save Up to 70%
+            Switch to Electric &amp; Save Up to 70%
           </p>
           <p className="text-white/70 max-w-2xl mx-auto mb-8 text-lg">
             Convert your existing scooter or bike with certified EV kits. Enjoy
@@ -967,7 +1186,7 @@ export default function HomePage() {
           <Link to="/conversions">
             <Button
               size="lg"
-              className="bg-white text-brand-dark hover:bg-white/90 font-bold px-10 py-3 text-base shadow-lg"
+              className="bg-brand-green hover:bg-brand-green/90 text-white font-bold px-10 py-3 text-base shadow-lg"
               data-ocid="conversion_promo.primary_button"
             >
               Start Conversion Today <ArrowRight className="h-4 w-4 ml-2" />
@@ -976,7 +1195,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Franchise Strip */}
+      {/* Franchise Section — 2x2 icon cards */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4 lg:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -987,24 +1206,50 @@ export default function HomePage() {
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
                 Partner With Us
               </h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-muted-foreground mb-4 leading-relaxed">
                 Become a JSR Electric Vehicles franchise partner and be part of
                 India's fastest-growing EV movement. Build a successful business
                 with our proven model.
               </p>
-              <ul className="space-y-3 mb-8">
-                {franchiseBenefits.map((benefit) => (
-                  <li
-                    key={benefit}
-                    className="flex items-center gap-3 text-sm text-foreground"
-                  >
-                    <div className="w-5 h-5 rounded-full bg-brand-green/15 flex items-center justify-center shrink-0">
-                      <ChevronRight className="h-3 w-3 text-brand-green" />
+              {/* Investment callout */}
+              <div
+                className="mb-6 px-4 py-3 rounded-xl border"
+                style={{
+                  background: "oklch(0.62 0.19 155 / 0.08)",
+                  borderColor: "oklch(0.62 0.19 155 / 0.3)",
+                }}
+              >
+                <span className="text-brand-green font-bold text-lg">
+                  Investment starting from \u20b95\u201310 Lakhs
+                </span>
+                <span className="text-muted-foreground text-sm ml-2">
+                  \u2014 low risk, high return
+                </span>
+              </div>
+              {/* 2x2 cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                {franchiseBenefits.map((benefit) => {
+                  const Icon = benefit.icon;
+                  return (
+                    <div
+                      key={benefit.title}
+                      className="flex gap-3 p-4 rounded-xl bg-card border border-border hover:border-brand-green/40 transition-all duration-300"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-brand-green/10 flex items-center justify-center shrink-0">
+                        <Icon className="h-4 w-4 text-brand-green" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground text-sm mb-0.5">
+                          {benefit.title}
+                        </div>
+                        <div className="text-muted-foreground text-xs leading-snug">
+                          {benefit.desc}
+                        </div>
+                      </div>
                     </div>
-                    {benefit}
-                  </li>
-                ))}
-              </ul>
+                  );
+                })}
+              </div>
               <Link to="/franchise">
                 <Button
                   className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold px-8"
@@ -1064,6 +1309,17 @@ export default function HomePage() {
               >
                 Book a Test Ride
               </button>
+              {/* WhatsApp quick-link */}
+              <a
+                href="https://wa.me/919948955517?text=Hello%20JSR%20Electric%20Vehicles%2C%20I%20want%20to%20go%20electric!"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white font-bold px-6 py-3 rounded-md transition-all"
+                data-ocid="contact_strip.whatsapp_button"
+              >
+                <WhatsAppIcon className="h-4 w-4" />
+                WhatsApp Us
+              </a>
               <Link to="/contact">
                 <Button
                   size="lg"
@@ -1099,14 +1355,7 @@ export default function HomePage() {
           className="flex-1 flex flex-col items-center justify-center gap-0.5 text-white hover:bg-white/5 transition-colors border-x border-white/10"
           data-ocid="mobile_bar.whatsapp_button"
         >
-          <svg
-            className="h-5 w-5 text-brand-green"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-          </svg>
+          <WhatsAppIcon className="h-5 w-5 text-brand-green" />
           <span className="text-[10px] font-medium">WhatsApp</span>
         </a>
         <button
@@ -1131,6 +1380,19 @@ export default function HomePage() {
           <span className="text-[10px] font-medium">Book Test Ride</span>
         </button>
       </div>
+
+      {/* Floating WhatsApp */}
+      <a
+        href="https://wa.me/919948955517?text=Hello%20JSR%20Electric%20Vehicles%2C%20I%20want%20information%20about%20EV%20vehicles."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-20 md:bottom-6 right-4 md:right-6 z-40 w-14 h-14 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform"
+        style={{ background: "#25D366" }}
+        aria-label="WhatsApp Chat"
+        data-ocid="floating.whatsapp_button"
+      >
+        <WhatsAppIcon className="h-7 w-7 text-white" />
+      </a>
 
       <QuoteModal open={quoteOpen} onClose={() => setQuoteOpen(false)} />
     </main>
