@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@tanstack/react-router";
-import { CalendarDays, GitCompareArrows, Menu, X, Zap } from "lucide-react";
+import { CalendarDays, Menu, X, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import QuoteModal from "./QuoteModal";
 
@@ -47,7 +47,7 @@ export default function Navbar() {
         }`}
       >
         <nav className="container mx-auto px-4 lg:px-6 flex items-center justify-between h-16">
-          {/* Logo — slightly larger, with hover brightness */}
+          {/* Logo */}
           <Link
             to="/"
             className="flex items-center shrink-0 opacity-95 hover:opacity-100 transition-opacity"
@@ -59,7 +59,7 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Desktop Nav — underline active indicator */}
+          {/* Desktop Nav */}
           <ul className="hidden lg:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <li key={link.href} className="relative">
@@ -72,7 +72,6 @@ export default function Navbar() {
                   }`}
                 >
                   {link.label}
-                  {/* Active underline */}
                   {isActive(link.href) && (
                     <span
                       className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full"
@@ -128,6 +127,7 @@ export default function Navbar() {
                 <li key={link.href}>
                   <Link
                     to={link.href}
+                    onClick={() => setMobileOpen(false)}
                     className={`block px-5 py-3 text-sm font-medium transition-colors ${
                       isActive(link.href)
                         ? "text-white bg-brand-green/10 border-l-[3px] border-brand-green pl-4"
@@ -141,6 +141,7 @@ export default function Navbar() {
               <li className="px-4 py-2">
                 <Link
                   to="/booking"
+                  onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg bg-brand-green/10 text-brand-green text-sm font-semibold hover:bg-brand-green/20 transition-colors"
                   data-ocid="nav.link"
                 >

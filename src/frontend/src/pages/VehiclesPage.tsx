@@ -216,7 +216,11 @@ export default function VehiclesPage() {
                       {/* Image with gradient bleed */}
                       <div className="relative overflow-hidden h-52">
                         <img
-                          src={getVehicleImage(vehicle.id, vehicle.brand)}
+                          src={getVehicleImage(
+                            vehicle.id,
+                            vehicle.brand,
+                            vehicle.name,
+                          )}
                           alt={vehicle.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                           loading="lazy"

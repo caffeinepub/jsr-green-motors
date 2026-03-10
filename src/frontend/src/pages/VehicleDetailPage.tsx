@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { STATIC_VEHICLES } from "@/data/vehicles";
 import { useAddVehicleEnquiry, useVehicleById } from "@/hooks/useQueries";
 import { calculateEMI, formatPrice, getVehicleImage } from "@/utils/helpers";
 import { Link, useParams } from "@tanstack/react-router";
@@ -36,11 +37,20 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { Vehicle } from "../backend.d";
 
 export default function VehicleDetailPage() {
   const { id } = useParams({ strict: false });
   const vehicleId = BigInt((id as string | undefined) ?? "0");
-  const { data: vehicle, isLoading, isError } = useVehicleById(vehicleId);
+  const { data: backendVehicle, isLoading } = useVehicleById(vehicleId);
+  // Fall back to static data if backend fails or vehicle not found
+  const staticVehicle = STATIC_VEHICLES.find((v) => v.id === vehicleId) as
+    | Vehicle
+    | undefined;
+  // Always use staticVehicle as immediate fallback — backend data will replace it when ready
+  const vehicle: Vehicle | undefined = (backendVehicle ?? staticVehicle) as
+    | Vehicle
+    | undefined;
   const enquiryMutation = useAddVehicleEnquiry();
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [enquirySuccess, setEnquirySuccess] = useState(false);
@@ -62,7 +72,7 @@ export default function VehicleDetailPage() {
   useEffect(() => {
     if (vehicle) {
       document.title = `${vehicle.name} | JSR Electric Vehicles`;
-      setLoanAmount(Number(vehicle.price_min));
+      setLoanAmount(0);
     }
   }, [vehicle]);
 
@@ -83,7 +93,8 @@ export default function VehicleDetailPage() {
     }
   };
 
-  if (isLoading) {
+  const showLoading = isLoading && !staticVehicle;
+  if (showLoading) {
     return (
       <main className="pt-20">
         <div className="container mx-auto px-4 lg:px-6 py-12">
@@ -102,7 +113,7 @@ export default function VehicleDetailPage() {
     );
   }
 
-  if (isError || !vehicle) {
+  if (!vehicle) {
     return (
       <main className="pt-20 min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -174,7 +185,7 @@ export default function VehicleDetailPage() {
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="relative">
               <img
-                src={getVehicleImage(vehicle.id, vehicle.brand)}
+                src={getVehicleImage(vehicle.id, vehicle.brand, vehicle.name)}
                 alt={vehicle.name}
                 className="w-full rounded-2xl object-cover h-72 lg:h-96 shadow-card-hover"
               />
@@ -303,8 +314,8 @@ export default function VehicleDetailPage() {
                   </div>
                   <Slider
                     value={[loanAmount]}
-                    min={Number(vehicle.price_min)}
-                    max={Number(vehicle.price_max)}
+                    min={0}
+                    max={400000}
                     step={1000}
                     onValueChange={(v) => setLoanAmount(v[0])}
                     className="mt-2"
@@ -552,7 +563,7 @@ export default function VehicleDetailPage() {
               <CheckCircle2 className="h-5 w-5 text-brand-green shrink-0" />
               <p className="text-sm font-medium text-foreground">
                 Delivered with Full Documentation &amp; Service Support — JSR
-                Green Motors stands with you after every purchase.
+                Electric Vehicles stands with you after every purchase.
               </p>
             </div>
           </div>
