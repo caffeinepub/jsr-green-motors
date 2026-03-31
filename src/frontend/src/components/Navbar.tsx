@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@tanstack/react-router";
-import { CalendarDays, Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import QuoteModal from "./QuoteModal";
 
@@ -12,7 +11,6 @@ const navLinks = [
   { href: "/services", label: "Services" },
   { href: "/franchise", label: "Franchise" },
   { href: "/conversions", label: "Conversions" },
-  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -24,7 +22,7 @@ export default function Navbar() {
   const pathname = router.state.location.pathname;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -39,43 +37,68 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Floating pill navbar */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-brand-dark/95 backdrop-blur-md shadow-lg border-b border-white/5"
-            : "bg-brand-dark/80 backdrop-blur-sm"
-        }`}
+        className="fixed top-4 left-1/2 z-50"
+        style={{
+          transform: "translateX(-50%)",
+          width: "calc(100% - 32px)",
+          maxWidth: "1200px",
+        }}
       >
-        <nav className="container mx-auto px-4 lg:px-6 flex items-center justify-between h-16">
+        <nav
+          className="flex items-center justify-between px-5 py-2.5"
+          style={{
+            background: scrolled ? "rgba(0,0,0,0.85)" : "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(40px) saturate(180%)",
+            WebkitBackdropFilter: "blur(40px) saturate(180%)",
+            border: scrolled
+              ? "1px solid rgba(0,255,178,0.3)"
+              : "1px solid rgba(0,255,178,0.15)",
+            borderRadius: "9999px",
+            boxShadow: scrolled
+              ? "0 0 40px rgba(0,255,178,0.1), 0 8px 32px rgba(0,0,0,0.4)"
+              : "0 4px 24px rgba(0,0,0,0.3)",
+            transition: "all 0.3s ease",
+          }}
+        >
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center shrink-0 opacity-95 hover:opacity-100 transition-opacity"
+            className="shrink-0 flex items-center gap-2"
+            data-ocid="nav.link"
           >
             <img
               src="/assets/uploads/JSR_LOGO-2.png"
               alt="JSR Electric Vehicles"
-              className="h-10 lg:h-12 w-auto object-contain"
+              className="h-10 w-auto object-contain"
             />
           </Link>
 
-          {/* Desktop Nav */}
-          <ul className="hidden lg:flex items-center gap-0.5">
+          {/* Desktop nav links */}
+          <ul className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <li key={link.href} className="relative">
+              <li key={link.href}>
                 <Link
                   to={link.href}
-                  className={`relative px-3 py-2 text-sm font-medium transition-colors duration-200 block ${
-                    isActive(link.href)
-                      ? "text-white"
-                      : "text-white/65 hover:text-white/90"
-                  }`}
+                  data-ocid="nav.link"
+                  className="relative px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.12em] transition-colors duration-200 block"
+                  style={{
+                    fontFamily: "'Orbitron', sans-serif",
+                    color: isActive(link.href)
+                      ? "#00FFB2"
+                      : "rgba(240,255,248,0.65)",
+                  }}
                 >
                   {link.label}
                   {isActive(link.href) && (
                     <span
-                      className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full"
-                      style={{ background: "oklch(0.62 0.19 155)" }}
+                      className="absolute bottom-0 left-3 right-3 h-px"
+                      style={{
+                        background:
+                          "linear-gradient(to right, transparent, #00FFB2, transparent)",
+                        boxShadow: "0 0 6px #00FFB2",
+                      }}
                     />
                   )}
                 </Link>
@@ -83,27 +106,19 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* CTA + Mobile Toggle */}
-          <div className="flex items-center gap-2">
-            <Link
-              to="/booking"
-              className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white/70 hover:text-white border border-white/15 hover:border-white/30 rounded-md transition-all duration-200"
-              data-ocid="nav.link"
-            >
-              <CalendarDays className="h-4 w-4 text-brand-green" />
-              Book Test Drive
-            </Link>
-            <Button
-              onClick={() => setQuoteOpen(true)}
-              className="hidden sm:flex items-center gap-2 bg-brand-green hover:bg-brand-green/90 hover:scale-[1.04] active:scale-95 text-white font-semibold px-4 py-2 text-sm rounded-md transition-all duration-200"
-              style={{ boxShadow: "0 0 16px oklch(0.62 0.19 155 / 0.35)" }}
-            >
-              <Zap className="h-4 w-4" />
-              Get a Quote
-            </Button>
+          {/* Right: GET QUOTE + mobile toggle */}
+          <div className="flex items-center gap-3">
             <button
               type="button"
-              className="lg:hidden text-white p-2 rounded-md hover:bg-white/10 transition-colors"
+              onClick={() => setQuoteOpen(true)}
+              className="btn-neon hidden sm:block text-[11px] px-5 py-2 rounded-full"
+              data-ocid="nav.primary_button"
+            >
+              GET QUOTE
+            </button>
+            <button
+              type="button"
+              className="lg:hidden text-[#00FFB2] p-1.5 rounded-full hover:bg-white/5 transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle menu"
             >
@@ -116,50 +131,51 @@ export default function Navbar() {
           </div>
         </nav>
 
-        {/* Mobile Menu */}
+        {/* Mobile dropdown — below pill */}
         {mobileOpen && (
           <div
-            className="lg:hidden border-t border-white/10 animate-slide-in"
-            style={{ background: "oklch(0.09 0.01 145)" }}
+            className="lg:hidden mt-2 rounded-2xl overflow-hidden"
+            style={{
+              background: "rgba(0,0,0,0.92)",
+              backdropFilter: "blur(40px)",
+              border: "1px solid rgba(0,255,178,0.15)",
+              boxShadow: "0 16px 48px rgba(0,0,0,0.5)",
+            }}
           >
             <ul className="flex flex-col py-2">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     to={link.href}
+                    data-ocid="nav.link"
                     onClick={() => setMobileOpen(false)}
-                    className={`block px-5 py-3 text-sm font-medium transition-colors ${
-                      isActive(link.href)
-                        ? "text-white bg-brand-green/10 border-l-[3px] border-brand-green pl-4"
-                        : "text-white/65 hover:text-white hover:bg-white/5 border-l-[3px] border-transparent"
-                    }`}
+                    className="block px-6 py-3 text-xs uppercase tracking-widest transition-colors"
+                    style={{
+                      fontFamily: "'Orbitron', sans-serif",
+                      color: isActive(link.href)
+                        ? "#00FFB2"
+                        : "rgba(240,255,248,0.65)",
+                      borderLeft: isActive(link.href)
+                        ? "2px solid #00FFB2"
+                        : "2px solid transparent",
+                    }}
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
-              <li className="px-4 py-2">
-                <Link
-                  to="/booking"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg bg-brand-green/10 text-brand-green text-sm font-semibold hover:bg-brand-green/20 transition-colors"
-                  data-ocid="nav.link"
-                >
-                  <CalendarDays className="h-4 w-4" />
-                  Book Test Drive
-                </Link>
-              </li>
               <li className="px-4 py-3">
-                <Button
+                <button
+                  type="button"
                   onClick={() => {
                     setMobileOpen(false);
                     setQuoteOpen(true);
                   }}
-                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+                  className="btn-neon w-full py-2.5 rounded-full text-xs"
+                  data-ocid="nav.primary_button"
                 >
-                  <Zap className="h-4 w-4 mr-2" />
-                  Get a Quote
-                </Button>
+                  GET QUOTE
+                </button>
               </li>
             </ul>
           </div>

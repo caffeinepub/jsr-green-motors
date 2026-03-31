@@ -20,22 +20,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { getVehicleExtended } from "@/data/vehicleGallery";
 import { STATIC_VEHICLES } from "@/data/vehicles";
 import { useAddVehicleEnquiry, useVehicleById } from "@/hooks/useQueries";
 import { calculateEMI, formatPrice, getVehicleImage } from "@/utils/helpers";
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import {
   ArrowLeft,
   Battery,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Gauge,
   Loader2,
+  Play,
   Ruler,
   Shield,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Vehicle } from "../backend.d";
 
@@ -43,11 +47,9 @@ export default function VehicleDetailPage() {
   const { id } = useParams({ strict: false });
   const vehicleId = BigInt((id as string | undefined) ?? "0");
   const { data: backendVehicle, isLoading } = useVehicleById(vehicleId);
-  // Fall back to static data if backend fails or vehicle not found
   const staticVehicle = STATIC_VEHICLES.find((v) => v.id === vehicleId) as
     | Vehicle
     | undefined;
-  // Always use staticVehicle as immediate fallback — backend data will replace it when ready
   const vehicle: Vehicle | undefined = (backendVehicle ?? staticVehicle) as
     | Vehicle
     | undefined;
@@ -69,6 +71,42 @@ export default function VehicleDetailPage() {
     message: "",
   });
 
+  // Gallery state
+  const extended = getVehicleExtended(vehicleId);
+  const fallbackImg = vehicle
+    ? getVehicleImage(vehicle.id, vehicle.brand, vehicle.name)
+    : "";
+
+  const allGalleryImages =
+    extended.gallery.length > 0
+      ? extended.gallery
+      : fallbackImg
+        ? [{ url: fallbackImg, label: "Vehicle" }]
+        : [];
+
+  const [activeImageUrl, setActiveImageUrl] = useState<string>(
+    allGalleryImages[0]?.url ?? "",
+  );
+  const [selectedColorName, setSelectedColorName] = useState<string | null>(
+    extended.colors[0]?.name ?? null,
+  );
+
+  // Reset gallery state when vehicle changes
+  useEffect(() => {
+    const newExtended = getVehicleExtended(vehicleId);
+    const newFallback = vehicle
+      ? getVehicleImage(vehicle.id, vehicle.brand, vehicle.name)
+      : "";
+    const newGallery =
+      newExtended.gallery.length > 0
+        ? newExtended.gallery
+        : newFallback
+          ? [{ url: newFallback, label: "Vehicle" }]
+          : [];
+    setActiveImageUrl(newGallery[0]?.url ?? "");
+    setSelectedColorName(newExtended.colors[0]?.name ?? null);
+  }, [vehicleId, vehicle]);
+
   useEffect(() => {
     if (vehicle) {
       document.title = `${vehicle.name} | JSR Electric Vehicles`;
@@ -77,6 +115,37 @@ export default function VehicleDetailPage() {
   }, [vehicle]);
 
   const emi = calculateEMI(loanAmount, interestRate, tenure);
+
+  // Swipe navigation
+  const navigate = useNavigate();
+  const currentIndex = STATIC_VEHICLES.findIndex((v) => v.id === vehicleId);
+  const prevVehicle =
+    currentIndex > 0 ? STATIC_VEHICLES[currentIndex - 1] : null;
+  const nextVehicle =
+    currentIndex < STATIC_VEHICLES.length - 1
+      ? STATIC_VEHICLES[currentIndex + 1]
+      : null;
+
+  const touchStartX = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null) return;
+      const delta = touchStartX.current - e.changedTouches[0].clientX;
+      touchStartX.current = null;
+      if (Math.abs(delta) < 50) return;
+      if (delta > 0 && nextVehicle) {
+        navigate({ to: `/vehicles/${nextVehicle.id.toString()}` });
+      } else if (delta < 0 && prevVehicle) {
+        navigate({ to: `/vehicles/${prevVehicle.id.toString()}` });
+      }
+    },
+    [navigate, nextVehicle, prevVehicle],
+  );
 
   const handleEnquiry = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,7 +203,8 @@ export default function VehicleDetailPage() {
     );
   }
 
-  const specs = [
+  // Specs — use keyFeatures from extended data if available, else fall back to backend fields
+  const backendSpecs = [
     {
       label: "Motor Power",
       value: `${Number(vehicle.motor_watts)} W`,
@@ -165,8 +235,48 @@ export default function VehicleDetailPage() {
     { label: "Warranty", value: vehicle.warranty, icon: CheckCircle2 },
   ];
 
+  const bgColor = extended.bgColor ?? "oklch(0.12 0.015 145)";
+
   return (
-    <main className="pt-20">
+    <main
+      className="pt-20"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Swipe nav arrows */}
+      {prevVehicle && (
+        <button
+          onClick={() =>
+            navigate({ to: `/vehicles/${prevVehicle.id.toString()}` })
+          }
+          type="button"
+          className="fixed left-2 top-1/2 -translate-y-1/2 z-50 bg-brand-green/90 hover:bg-brand-green text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition-all"
+          aria-label="Previous vehicle"
+          data-ocid="vehicle_detail.prev_button"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+      )}
+      {nextVehicle && (
+        <button
+          onClick={() =>
+            navigate({ to: `/vehicles/${nextVehicle.id.toString()}` })
+          }
+          type="button"
+          className="fixed right-2 top-1/2 -translate-y-1/2 z-50 bg-brand-green/90 hover:bg-brand-green text-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg transition-all"
+          aria-label="Next vehicle"
+          data-ocid="vehicle_detail.next_button"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      )}
+      {/* Vehicle counter */}
+      {currentIndex >= 0 && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-black/70 text-white text-xs px-3 py-1 rounded-full pointer-events-none">
+          {currentIndex + 1} / {STATIC_VEHICLES.length}
+        </div>
+      )}
+
       {/* Back Navigation */}
       <div className="bg-background border-b border-border py-3">
         <div className="container mx-auto px-4 lg:px-6">
@@ -179,30 +289,114 @@ export default function VehicleDetailPage() {
         </div>
       </div>
 
-      {/* Hero Image */}
-      <section className="bg-card">
+      {/* Hero: Gallery + Info */}
+      <section style={{ background: bgColor }}>
         <div className="container mx-auto px-4 lg:px-6 py-8">
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="relative">
-              <img
-                src={getVehicleImage(vehicle.id, vehicle.brand, vehicle.name)}
-                alt={vehicle.name}
-                className="w-full rounded-2xl object-contain shadow-card-hover"
-                style={{
-                  maxHeight: "480px",
-                  minHeight: "240px",
-                  background: "oklch(0.12 0.01 145)",
-                }}
-              />
-              <Badge className="absolute top-4 left-4 bg-brand-green text-white border-0">
-                {vehicle.category}
-              </Badge>
-              <img
-                src="/assets/uploads/JSR_LOGO-2.png"
-                alt="JSR"
-                className="absolute bottom-3 right-3 w-10 h-10 object-contain opacity-60 pointer-events-none"
-              />
+          <div className="grid lg:grid-cols-2 gap-10 items-start">
+            {/* Gallery column */}
+            <div className="flex flex-col gap-4">
+              {/* Main image */}
+              <div
+                className="relative rounded-2xl overflow-hidden flex items-center justify-center"
+                style={{ background: bgColor, minHeight: 260 }}
+              >
+                {activeImageUrl ? (
+                  <img
+                    src={activeImageUrl}
+                    alt={vehicle.name}
+                    className="w-full object-contain rounded-2xl shadow-card-hover"
+                    style={{ maxHeight: 420, minHeight: 200 }}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-64 text-muted-foreground text-sm">
+                    No image available
+                  </div>
+                )}
+                <Badge className="absolute top-4 left-4 bg-brand-green text-white border-0">
+                  {vehicle.category}
+                </Badge>
+                <img
+                  src="/assets/uploads/JSR_LOGO-2.png"
+                  alt="JSR"
+                  className="absolute bottom-3 right-3 w-10 h-10 object-contain opacity-60 pointer-events-none"
+                />
+              </div>
+
+              {/* Thumbnail strip */}
+              {allGalleryImages.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto pb-1">
+                  {allGalleryImages.map((img) => (
+                    <button
+                      key={img.url}
+                      type="button"
+                      onClick={() => setActiveImageUrl(img.url)}
+                      className="flex-none flex flex-col items-center gap-1 group focus:outline-none"
+                    >
+                      <div
+                        className={`w-20 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                          activeImageUrl === img.url
+                            ? "border-brand-green shadow-[0_0_0_2px_#00A859]"
+                            : "border-border/40 hover:border-brand-green/60"
+                        }`}
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.label}
+                          className="w-full h-full object-contain"
+                          style={{ background: bgColor }}
+                        />
+                      </div>
+                      <span
+                        className={`text-[10px] font-medium transition-colors ${
+                          activeImageUrl === img.url
+                            ? "text-brand-green"
+                            : "text-muted-foreground group-hover:text-foreground"
+                        }`}
+                      >
+                        {img.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Color selector */}
+              {extended.colors.length > 0 && (
+                <div className="mt-1">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                    Available Colors:
+                  </p>
+                  <div className="flex flex-wrap gap-3 items-center">
+                    {extended.colors.map((color) => (
+                      <button
+                        key={color.name}
+                        type="button"
+                        title={color.name}
+                        onClick={() => {
+                          setSelectedColorName(color.name);
+                          setActiveImageUrl(color.imageUrl);
+                        }}
+                        className={`relative w-7 h-7 rounded-full border-2 transition-all focus:outline-none ${
+                          selectedColorName === color.name
+                            ? "border-brand-green ring-2 ring-brand-green ring-offset-2 ring-offset-transparent scale-110"
+                            : "border-white/30 hover:scale-105 hover:border-brand-green/50"
+                        }`}
+                        style={{ backgroundColor: color.hex }}
+                        aria-label={color.name}
+                        data-ocid="vehicle_detail.toggle"
+                      />
+                    ))}
+                    {selectedColorName && (
+                      <span className="text-xs text-muted-foreground ml-1">
+                        {selectedColorName}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Info column */}
             <div>
               <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider mb-2">
                 {vehicle.brand}
@@ -230,6 +424,7 @@ export default function VehicleDetailPage() {
                 <Button
                   onClick={() => setQuoteOpen(true)}
                   className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold px-6"
+                  data-ocid="vehicle_detail.primary_button"
                 >
                   Get Quote
                 </Button>
@@ -237,6 +432,7 @@ export default function VehicleDetailPage() {
                   <Button
                     variant="outline"
                     className="border-brand-green text-brand-green hover:bg-brand-green/10"
+                    data-ocid="vehicle_detail.secondary_button"
                   >
                     Request Callback
                   </Button>
@@ -247,8 +443,29 @@ export default function VehicleDetailPage() {
         </div>
       </section>
 
+      {/* Key Highlights */}
+      {extended.highlights.length > 0 && (
+        <section className="py-12 bg-background">
+          <div className="container mx-auto px-4 lg:px-6">
+            <h2 className="text-2xl font-display font-bold text-foreground mb-6">
+              Key Highlights
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3 max-w-2xl">
+              {extended.highlights.map((highlight) => (
+                <div key={highlight} className="flex items-start gap-2.5">
+                  <CheckCircle2 className="h-5 w-5 text-brand-green shrink-0 mt-0.5" />
+                  <span className="text-foreground text-sm leading-relaxed">
+                    {highlight}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Specs Table */}
-      <section className="py-16 bg-background">
+      <section className="py-12 bg-background border-t border-border/40">
         <div className="container mx-auto px-4 lg:px-6">
           <h2 className="text-2xl font-display font-bold text-foreground mb-6">
             Key Specifications
@@ -262,7 +479,14 @@ export default function VehicleDetailPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {specs.map((spec) => {
+                {(extended.keyFeatures.length > 0
+                  ? extended.keyFeatures.map((kf) => ({
+                      label: kf.label,
+                      value: kf.value,
+                      icon: Zap,
+                    }))
+                  : backendSpecs
+                ).map((spec) => {
                   const Icon = spec.icon;
                   return (
                     <TableRow key={spec.label} className="hover:bg-muted/20">
@@ -283,6 +507,32 @@ export default function VehicleDetailPage() {
           </div>
         </div>
       </section>
+
+      {/* Video Section */}
+      {extended.videoUrl && (
+        <section className="py-12 bg-card border-t border-border/40">
+          <div className="container mx-auto px-4 lg:px-6">
+            <h2 className="text-2xl font-display font-bold text-foreground mb-6 flex items-center gap-3">
+              <span className="w-8 h-8 rounded-full bg-brand-green flex items-center justify-center">
+                <Play className="h-4 w-4 text-white fill-white" />
+              </span>
+              Watch the {vehicle.name} in Action
+            </h2>
+            <div
+              className="relative max-w-2xl rounded-2xl overflow-hidden shadow-lg border border-border"
+              style={{ paddingBottom: "56.25%", height: 0 }}
+            >
+              <iframe
+                src={extended.videoUrl}
+                title={`${vehicle.name} video`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Why Choose This Model */}
       <section className="py-8 pb-16 bg-background">
@@ -329,6 +579,7 @@ export default function VehicleDetailPage() {
                     step={1000}
                     onValueChange={(v) => setLoanAmount(v[0])}
                     className="mt-2"
+                    data-ocid="vehicle_detail.toggle"
                   />
                 </div>
                 <div>
@@ -483,7 +734,10 @@ export default function VehicleDetailPage() {
               Request a Callback
             </h2>
             {enquirySuccess ? (
-              <div className="bg-card border border-brand-green/20 rounded-2xl p-8 text-center">
+              <div
+                className="bg-card border border-brand-green/20 rounded-2xl p-8 text-center"
+                data-ocid="vehicle_detail.success_state"
+              >
                 <CheckCircle2 className="h-16 w-16 text-brand-green mx-auto mb-4" />
                 <h3 className="text-xl font-semibold text-foreground mb-2">
                   Enquiry Submitted!
@@ -509,6 +763,7 @@ export default function VehicleDetailPage() {
                         setEnquiry((p) => ({ ...p, name: e.target.value }))
                       }
                       required
+                      data-ocid="vehicle_detail.input"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -561,12 +816,14 @@ export default function VehicleDetailPage() {
                       setEnquiry((p) => ({ ...p, message: e.target.value }))
                     }
                     rows={3}
+                    data-ocid="vehicle_detail.textarea"
                   />
                 </div>
                 <Button
                   type="submit"
                   disabled={enquiryMutation.isPending}
                   className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+                  data-ocid="vehicle_detail.submit_button"
                 >
                   {enquiryMutation.isPending ? (
                     <>

@@ -1,9 +1,11 @@
+import { PhoneOtpVerifier } from "@/components/PhoneOtpVerifier";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddContactSubmission } from "@/hooks/useQueries";
+import { saveLead } from "@/lib/supabase";
 import {
   CheckCircle2,
   Clock,
@@ -20,6 +22,7 @@ import { toast } from "sonner";
 
 export default function ContactPage() {
   const [success, setSuccess] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const contactMutation = useAddContactSubmission();
   const [form, setForm] = useState({
     name: "",
@@ -44,20 +47,31 @@ export default function ContactPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    if (e.target.name === "phone") setOtpVerified(false);
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!otpVerified) {
+      toast.error("Please verify your phone number before submitting.");
+      return;
+    }
     try {
       await contactMutation.mutateAsync(form);
     } catch {
       // best-effort save, continue to WhatsApp regardless
     }
-    // Open WhatsApp with pre-filled message
     const msg = encodeURIComponent(
       `Hello JSR Electric Vehicles,\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nMessage: ${form.message}`,
     );
+    saveLead({
+      form_type: "contact",
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      message: form.message,
+    }).catch(() => {});
     window.open(`https://wa.me/919948955517?text=${msg}`, "_blank");
     setSuccess(true);
     toast.success("Redirecting to WhatsApp — we'll be in touch soon!");
@@ -101,7 +115,10 @@ export default function ContactPage() {
                     reply shortly on +91 9948955517.
                   </p>
                   <Button
-                    onClick={() => setSuccess(false)}
+                    onClick={() => {
+                      setSuccess(false);
+                      setOtpVerified(false);
+                    }}
                     className="bg-brand-green hover:bg-brand-green/90 text-white"
                   >
                     Send Another
@@ -137,6 +154,12 @@ export default function ContactPage() {
                       />
                     </div>
                   </div>
+                  <PhoneOtpVerifier
+                    phone={form.phone}
+                    verified={otpVerified}
+                    onVerified={() => setOtpVerified(true)}
+                    onReset={() => setOtpVerified(false)}
+                  />
                   <div className="space-y-1.5">
                     <Label htmlFor="cnt-email">Email *</Label>
                     <Input
@@ -163,8 +186,8 @@ export default function ContactPage() {
                   </div>
                   <Button
                     type="submit"
-                    disabled={contactMutation.isPending}
-                    className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+                    disabled={contactMutation.isPending || !otpVerified}
+                    className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold disabled:opacity-60"
                   >
                     {contactMutation.isPending ? (
                       <>
@@ -175,6 +198,11 @@ export default function ContactPage() {
                       "Send via WhatsApp"
                     )}
                   </Button>
+                  {!otpVerified && (
+                    <p className="text-xs text-center text-muted-foreground">
+                      Verify your phone number to enable submission.
+                    </p>
+                  )}
                 </form>
               )}
             </div>
@@ -185,7 +213,6 @@ export default function ContactPage() {
                 Business Information
               </h2>
 
-              {/* Info Cards */}
               <div className="space-y-4">
                 <div className="bg-card border border-border rounded-xl p-5 flex gap-4 hover:border-brand-green/40 transition-colors">
                   <div className="w-10 h-10 rounded-xl bg-brand-green/10 flex items-center justify-center shrink-0">
@@ -270,7 +297,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Google Maps Embed */}
               <div className="bg-card border border-border rounded-xl overflow-hidden">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3815.8!2d79.9704!3d17.0803!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sJSR+Green+Motors+Kodad!5e0!3m2!1sen!2sin!4v1"
@@ -284,7 +310,6 @@ export default function ContactPage() {
                 />
               </div>
 
-              {/* Serving Areas */}
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="font-medium text-foreground mb-3">
                   Serving Areas
@@ -309,7 +334,6 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Social */}
               <div className="bg-card border border-border rounded-xl p-5">
                 <h3 className="font-medium text-foreground mb-4">Follow Us</h3>
                 <div className="flex gap-3">

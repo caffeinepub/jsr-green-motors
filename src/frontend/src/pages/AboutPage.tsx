@@ -21,6 +21,28 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 
+// ─── Gold palette constants (royal aesthetic) ─────────────────────────────────
+const G = {
+  primary: "oklch(0.72 0.09 80)", // #C9A84C antique gold
+  bright: "oklch(0.82 0.12 80)", // #F0C040 rich gold
+  dim: "oklch(0.52 0.09 70)", // #8B6914 bronze
+  shimmer: "oklch(0.92 0.10 88)", // #FFE57A champagne
+  bg: "oklch(0.07 0.005 70)", // #0a0804 void dark
+  bgAlt: "oklch(0.08 0.004 70)", // #0F0D08 section alt
+  card: "oklch(0.09 0.005 70)", // #12100A card bg
+  cream: "oklch(0.95 0.02 85)", // #F5EDD8 cream text
+  muted: "oklch(0.62 0.02 80)", // #9C8B6E muted text
+  border: "rgba(201,168,76,0.25)", // gold border tint
+  borderHover: "rgba(201,168,76,0.5)",
+};
+
+const goldGlow = (size: "sm" | "md" | "lg" = "md") =>
+  ({
+    sm: "0 0 16px rgba(201,168,76,0.18)",
+    md: "0 0 28px rgba(201,168,76,0.22), 0 4px 20px rgba(0,0,0,0.5)",
+    lg: "0 8px 50px rgba(201,168,76,0.18), 0 0 0 1px rgba(201,168,76,0.12), 0 20px 60px rgba(0,0,0,0.6)",
+  })[size];
+
 const timelineItems = [
   {
     year: "2022",
@@ -128,8 +150,8 @@ const futurePlans = [
 ];
 
 const stats = [
-  { value: "20+", label: "EV Brands" },
-  { value: "500+", label: "Happy Customers" },
+  { value: "8+", label: "EV Brands" },
+  { value: "1100+", label: "Happy Customers" },
   { value: "5+", label: "Years Experience" },
   { value: "20+", label: "Dealer Network" },
 ];
@@ -179,6 +201,58 @@ const sustainabilityPoints = [
   },
 ];
 
+// Ornamental divider component
+function GoldDivider({ text }: { text?: string }) {
+  return (
+    <div
+      className="flex items-center justify-center gap-3 my-2"
+      aria-hidden="true"
+    >
+      <div
+        style={{
+          flex: 1,
+          height: 1,
+          background: `linear-gradient(to right, transparent, ${G.primary})`,
+        }}
+      />
+      <span
+        style={{
+          color: G.primary,
+          fontSize: "1.1rem",
+          letterSpacing: "0.15em",
+        }}
+      >
+        {text ?? "✦"}
+      </span>
+      <div
+        style={{
+          flex: 1,
+          height: 1,
+          background: `linear-gradient(to left, transparent, ${G.primary})`,
+        }}
+      />
+    </div>
+  );
+}
+
+// Section badge in gold
+function GoldBadge({ children }: { children: React.ReactNode }) {
+  return (
+    <Badge
+      style={{
+        background: "rgba(201,168,76,0.12)",
+        color: G.primary,
+        border: "1px solid rgba(201,168,76,0.3)",
+        fontSize: "0.65rem",
+        letterSpacing: "0.12em",
+        textTransform: "uppercase",
+      }}
+    >
+      {children}
+    </Badge>
+  );
+}
+
 export default function AboutPage() {
   useEffect(() => {
     document.title = "About Us | JSR Electric Vehicles";
@@ -209,21 +283,23 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <main className="pt-20">
-      {/* Hero — dark banner with showroom photo as subtle bg */}
+    <main className="pt-20" style={{ background: G.bg, color: G.cream }}>
+      {/* ══════════════════════════════════════════════════════════
+          HERO — Dark royal banner with golden glow
+      ══════════════════════════════════════════════════════════ */}
       <section
-        className="relative py-24 overflow-hidden"
+        className="relative py-28 overflow-hidden"
         style={{
-          background: "oklch(0.08 0.01 145)",
+          background: `linear-gradient(135deg, ${G.bg} 0%, oklch(0.10 0.01 72) 50%, ${G.bg} 100%)`,
         }}
       >
-        {/* Showroom photo at low opacity */}
+        {/* Showroom photo at very low opacity */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage:
               "url('/assets/uploads/ChatGPT-Image-Feb-9-2026-06_33_19-PM-6.png')",
-            opacity: 0.12,
+            opacity: 0.07,
           }}
         />
         {/* Dark overlay */}
@@ -231,63 +307,107 @@ export default function AboutPage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, oklch(0.06 0.01 145 / 0.7) 0%, oklch(0.1 0.02 155 / 0.5) 50%, oklch(0.08 0.01 145 / 0.8) 100%)",
+              "linear-gradient(to bottom, rgba(10,8,4,0.75) 0%, rgba(10,8,4,0.4) 50%, rgba(10,8,4,0.85) 100%)",
           }}
         />
-        {/* Green edge accent */}
+        {/* Golden central radial glow */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse 60% 80% at 0% 50%, oklch(0.62 0.19 155 / 0.06) 0%, transparent 70%)",
+              "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%)",
           }}
         />
+        {/* Subtle gold edge vignette */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 90% 80% at 50% 0%, rgba(201,168,76,0.04) 0%, transparent 60%)",
+          }}
+        />
+
         <div className="relative z-10 container mx-auto px-4 lg:px-6 text-center">
-          <Badge className="mb-4 bg-brand-green/20 text-brand-green border-brand-green/30 text-xs uppercase tracking-widest reveal-on-scroll">
-            Our Story
-          </Badge>
-          <div className="flex items-center justify-center gap-4 mb-6 reveal-on-scroll">
-            <img
-              src="/assets/uploads/JSR_LOGO-2.png"
-              alt="JSR"
-              className="w-14 h-14 object-contain opacity-90"
-            />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white">
-              About JSR Electric Vehicles
+          <div className="mb-5 reveal-on-scroll">
+            <GoldBadge>Our Story</GoldBadge>
+          </div>
+
+          <div className="flex items-center justify-center gap-5 mb-6 reveal-on-scroll">
+            {/* Gold halo behind logo */}
+            <div className="relative">
+              <div
+                className="absolute inset-0 rounded-full blur-xl"
+                style={{
+                  background: "rgba(201,168,76,0.25)",
+                  transform: "scale(1.6)",
+                }}
+                aria-hidden="true"
+              />
+              <img
+                src="/assets/uploads/JSR_LOGO-2.png"
+                alt="JSR"
+                className="relative w-14 h-14 object-contain opacity-95"
+              />
+            </div>
+            <h1
+              className="text-4xl md:text-5xl lg:text-6xl font-display font-bold"
+              style={{ color: G.cream }}
+            >
+              About{" "}
+              <span style={{ color: G.primary }}>JSR Electric Vehicles</span>
             </h1>
           </div>
-          <p className="text-white/65 text-xl max-w-3xl mx-auto leading-relaxed reveal-on-scroll">
+
+          <p
+            className="text-xl max-w-3xl mx-auto leading-relaxed mb-8 reveal-on-scroll"
+            style={{ color: G.muted }}
+          >
             We are more than a dealership. We are an electric mobility company
             building a sustainable transportation ecosystem across Telangana —
             one vehicle at a time.
           </p>
+
+          {/* Ornamental gold divider */}
+          <div className="max-w-md mx-auto reveal-on-scroll">
+            <GoldDivider text="── ✦ ──" />
+          </div>
         </div>
       </section>
 
-      {/* Stats Bar — horizontal row with dividers */}
+      {/* ══════════════════════════════════════════════════════════
+          STATS BAR — Gold numbers on dark gradient
+      ══════════════════════════════════════════════════════════ */}
       <section
         className="py-10 reveal-on-scroll"
         style={{
-          background:
-            "linear-gradient(135deg, oklch(0.12 0.01 145) 0%, oklch(0.16 0.04 155) 100%)",
+          background: `linear-gradient(90deg, ${G.bg} 0%, oklch(0.11 0.009 75) 50%, ${G.bg} 100%)`,
+          borderTop: "1px solid rgba(201,168,76,0.15)",
+          borderBottom: "1px solid rgba(201,168,76,0.15)",
         }}
       >
         <div className="container mx-auto px-4 lg:px-6">
-          <div className="flex flex-wrap justify-center divide-x divide-white/10">
+          <div className="flex flex-wrap justify-center" style={{ gap: 0 }}>
             {stats.map((stat, i) => (
               <div
                 key={stat.label}
-                className={`flex flex-col items-center px-8 py-4 ${
-                  i === 0 ? "" : ""
-                }`}
+                className="flex flex-col items-center px-8 py-4"
+                style={{
+                  borderRight:
+                    i < stats.length - 1
+                      ? "1px solid rgba(201,168,76,0.2)"
+                      : undefined,
+                }}
               >
                 <div
                   className="text-3xl md:text-4xl font-black font-display"
-                  style={{ color: "oklch(0.72 0.19 155)" }}
+                  style={{ color: G.bright }}
                 >
                   {stat.value}
                 </div>
-                <div className="text-white/50 text-xs uppercase tracking-widest mt-1">
+                <div
+                  className="text-xs uppercase tracking-widest mt-1"
+                  style={{ color: G.muted }}
+                >
                   {stat.label}
                 </div>
               </div>
@@ -296,25 +416,36 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Company Overview */}
-      <section className="py-20 bg-background">
+      {/* ══════════════════════════════════════════════════════════
+          COMPANY OVERVIEW
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bg }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center reveal-on-scroll">
             <div>
-              <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-                Company Overview
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
+              <div className="mb-3">
+                <GoldBadge>Company Overview</GoldBadge>
+              </div>
+              <h2
+                className="text-3xl md:text-4xl font-display font-bold mb-6"
+                style={{ color: G.cream }}
+              >
                 Electric Mobility for Every Road
               </h2>
-              <p className="text-muted-foreground mb-4 leading-relaxed text-base">
+              <p
+                className="mb-4 leading-relaxed text-base"
+                style={{ color: G.muted }}
+              >
                 JSR Electric Vehicles is an electric mobility company focused on
                 promoting sustainable transportation solutions in India. The
                 company operates as a multi-brand electric vehicle dealership
                 and distribution network providing electric two-wheelers,
                 electric three-wheelers, and EV components.
               </p>
-              <p className="text-muted-foreground leading-relaxed text-base">
+              <p
+                className="leading-relaxed text-base"
+                style={{ color: G.muted }}
+              >
                 Through a growing network of dealers and service partners, we
                 aim to make electric mobility accessible, affordable, and
                 reliable for customers in cities, towns, and developing markets
@@ -328,16 +459,18 @@ export default function AboutPage() {
               <div
                 className="rounded-2xl p-10 flex items-center justify-center"
                 style={{
-                  background:
-                    "linear-gradient(135deg, oklch(0.12 0.01 145) 0%, oklch(0.18 0.05 155) 100%)",
-                  border: "1px solid oklch(0.62 0.19 155 / 0.2)",
-                  boxShadow: "0 0 40px oklch(0.62 0.19 155 / 0.08)",
+                  background: `linear-gradient(135deg, ${G.card} 0%, oklch(0.12 0.008 75) 100%)`,
+                  border: "1px solid rgba(201,168,76,0.25)",
+                  boxShadow: goldGlow("lg"),
                 }}
               >
                 <img
                   src="/assets/uploads/JSR_LOGO-2.png"
                   alt="JSR Electric Vehicles"
                   className="h-32 w-auto object-contain"
+                  style={{
+                    filter: "drop-shadow(0 0 20px rgba(201,168,76,0.3))",
+                  }}
                 />
               </div>
             </div>
@@ -345,35 +478,63 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission & Vision — side by side with vertical divider */}
-      <section className="py-20 bg-brand-light-gray reveal-on-scroll">
+      {/* ══════════════════════════════════════════════════════════
+          MISSION & VISION — side by side with gold vertical divider
+      ══════════════════════════════════════════════════════════ */}
+      <section
+        className="py-20 reveal-on-scroll"
+        style={{ background: G.bgAlt }}
+      >
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-              Purpose
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-              Our Mission & Vision
+            <GoldBadge>Purpose</GoldBadge>
+            <h2
+              className="text-3xl md:text-4xl font-display font-bold mt-3"
+              style={{ color: G.cream }}
+            >
+              Our Mission &amp; Vision
             </h2>
           </div>
           <div className="max-w-4xl mx-auto">
             <div
               className="rounded-2xl overflow-hidden"
               style={{
-                border: "1px solid oklch(0.62 0.19 155 / 0.2)",
-                boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+                border: "1px solid rgba(201,168,76,0.2)",
+                boxShadow: goldGlow("md"),
               }}
             >
-              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
+              <div
+                className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x"
+                style={{ borderColor: "rgba(201,168,76,0.15)" }}
+              >
                 {/* Mission */}
-                <div className="bg-card p-8 hover:bg-brand-green/[0.02] transition-colors">
-                  <div className="w-12 h-12 rounded-xl bg-brand-green/10 flex items-center justify-center mb-5">
-                    <Target className="h-6 w-6 text-brand-green" />
+                <div
+                  className="p-8 transition-colors"
+                  style={{ background: G.card }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background =
+                      "oklch(0.11 0.006 75)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = G.card;
+                  }}
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                    style={{ background: "rgba(201,168,76,0.12)" }}
+                  >
+                    <Target style={{ color: G.primary }} className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
+                  <h3
+                    className="text-xl font-bold mb-3"
+                    style={{ color: G.cream }}
+                  >
                     Our Mission
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed text-base">
+                  <p
+                    className="leading-relaxed text-base"
+                    style={{ color: G.muted }}
+                  >
                     To promote eco-friendly transportation by making electric
                     vehicles accessible and affordable while building a strong
                     dealer network, providing reliable service support, and
@@ -382,14 +543,36 @@ export default function AboutPage() {
                   </p>
                 </div>
                 {/* Vision */}
-                <div className="bg-card p-8 hover:bg-brand-green/[0.02] transition-colors">
-                  <div className="w-12 h-12 rounded-xl bg-brand-green/10 flex items-center justify-center mb-5">
-                    <Lightbulb className="h-6 w-6 text-brand-green" />
+                <div
+                  className="p-8 transition-colors"
+                  style={{ background: G.card }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background =
+                      "oklch(0.11 0.006 75)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = G.card;
+                  }}
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                    style={{ background: "rgba(201,168,76,0.12)" }}
+                  >
+                    <Lightbulb
+                      style={{ color: G.primary }}
+                      className="h-6 w-6"
+                    />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">
+                  <h3
+                    className="text-xl font-bold mb-3"
+                    style={{ color: G.cream }}
+                  >
                     Our Vision
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed text-base">
+                  <p
+                    className="leading-relaxed text-base"
+                    style={{ color: G.muted }}
+                  >
                     To become a trusted electric mobility brand with a strong
                     network of EV dealerships, service centers, and sustainable
                     transportation solutions across India.
@@ -401,14 +584,17 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Founder Section */}
-      <section className="py-20 bg-background">
+      {/* ══════════════════════════════════════════════════════════
+          FOUNDER SECTION — Royal gold regal card
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bg }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12">
-            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-              Leadership
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+            <GoldBadge>Leadership</GoldBadge>
+            <h2
+              className="text-3xl md:text-4xl font-display font-bold mt-3"
+              style={{ color: G.cream }}
+            >
               Meet the Founder
             </h2>
           </div>
@@ -416,18 +602,25 @@ export default function AboutPage() {
             <div
               className="rounded-2xl p-8"
               style={{
-                background:
-                  "linear-gradient(135deg, oklch(0.1 0.01 145) 0%, oklch(0.15 0.04 155) 100%)",
-                border: "1px solid oklch(0.62 0.19 155 / 0.2)",
+                background: `linear-gradient(135deg, ${G.card} 0%, oklch(0.11 0.008 75) 100%)`,
+                border: "1px solid rgba(201,168,76,0.3)",
                 boxShadow:
-                  "0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px oklch(0.62 0.19 155 / 0.1)",
+                  "0 8px 40px rgba(201,168,76,0.08), 0 0 0 1px rgba(201,168,76,0.1), 0 20px 60px rgba(0,0,0,0.6)",
               }}
             >
+              {/* Top ornament */}
+              <div className="text-center mb-6">
+                <GoldDivider text="✦" />
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start mb-8">
                 {/* Founder Photo */}
                 <div
                   className="w-36 h-36 sm:w-48 sm:h-48 rounded-2xl shrink-0 overflow-hidden"
-                  style={{ border: "2px solid oklch(0.62 0.19 155 / 0.35)" }}
+                  style={{
+                    border: "2px solid rgba(201,168,76,0.4)",
+                    boxShadow: "0 0 30px rgba(201,168,76,0.15)",
+                  }}
                 >
                   <img
                     src="/assets/PJR%20PHOTO.png"
@@ -440,13 +633,27 @@ export default function AboutPage() {
                   />
                 </div>
                 <div className="text-center sm:text-left">
-                  <h3 className="text-2xl font-bold text-white mb-1">
+                  <h3
+                    className="text-2xl font-bold mb-1"
+                    style={{ color: G.cream }}
+                  >
                     Janardhan Reddy Pasham
                   </h3>
-                  <Badge className="bg-brand-green/20 text-brand-green border-brand-green/30 text-xs mb-3">
+                  <Badge
+                    style={{
+                      background: "rgba(201,168,76,0.15)",
+                      color: G.primary,
+                      border: "1px solid rgba(201,168,76,0.3)",
+                      fontSize: "0.65rem",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
                     Founder &amp; Director
                   </Badge>
-                  <p className="text-white/65 text-base mt-3 leading-relaxed">
+                  <p
+                    className="text-base mt-3 leading-relaxed"
+                    style={{ color: G.muted }}
+                  >
                     An entrepreneur with a strong vision for sustainable
                     transportation and electric mobility in India. Recognizing
                     the rapid shift toward electric vehicles and the need for
@@ -455,7 +662,10 @@ export default function AboutPage() {
                     vehicle distribution, dealership development, and service
                     support.
                   </p>
-                  <p className="text-white/65 text-base mt-2 leading-relaxed">
+                  <p
+                    className="text-base mt-2 leading-relaxed"
+                    style={{ color: G.muted }}
+                  >
                     Under his leadership, the company focuses on building strong
                     partnerships with manufacturers, dealers, and service
                     providers to expand access to electric vehicles across
@@ -464,23 +674,30 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* Founder's Quote — enlarged with decorative quotation mark */}
+              {/* Founder Quote — royal ornate treatment */}
               <div
                 className="rounded-xl p-8 relative"
                 style={{
-                  background: "oklch(0.06 0.01 145 / 0.6)",
-                  border: "1px solid oklch(0.62 0.19 155 / 0.15)",
+                  background: "rgba(10,8,4,0.7)",
+                  border: "1px solid rgba(201,168,76,0.18)",
+                  boxShadow: "inset 0 1px 0 rgba(201,168,76,0.1)",
                 }}
               >
-                {/* Large decorative quote mark */}
+                {/* Large ornate gold quotation mark */}
                 <Quote
-                  className="absolute -top-3 left-6 h-14 w-14 text-brand-green/25"
+                  className="absolute -top-5 left-6 h-16 w-16"
                   aria-hidden="true"
-                  style={{ transform: "scaleX(-1)" }}
+                  style={{
+                    color: "rgba(201,168,76,0.35)",
+                    transform: "scaleX(-1)",
+                  }}
                 />
                 <p
-                  className="text-white/85 text-lg md:text-xl leading-relaxed italic pt-4"
-                  style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+                  className="text-lg md:text-xl leading-relaxed italic pt-6"
+                  style={{
+                    color: "rgba(245,237,216,0.85)",
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                  }}
                 >
                   "Electric mobility represents an important step toward a
                   cleaner and more sustainable future. At JSR Electric Vehicles,
@@ -490,14 +707,16 @@ export default function AboutPage() {
                   reliable ecosystem that supports customers, businesses, and
                   communities in adopting electric transportation solutions."
                 </p>
-                <div className="mt-5 flex items-center gap-3">
+                <div className="mt-6 flex items-center gap-3">
                   <div
-                    className="w-8 h-px"
-                    style={{ background: "oklch(0.62 0.19 155)" }}
+                    className="w-10 h-px"
+                    style={{
+                      background: `linear-gradient(to right, ${G.primary}, transparent)`,
+                    }}
                   />
                   <span
                     className="text-sm font-semibold"
-                    style={{ color: "oklch(0.72 0.19 155)" }}
+                    style={{ color: G.primary }}
                   >
                     Janardhan Reddy Pasham, Founder &amp; Director
                   </span>
@@ -508,17 +727,23 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Products & Solutions — 2x2 grid on desktop */}
-      <section className="py-20 bg-brand-light-gray">
+      {/* ══════════════════════════════════════════════════════════
+          PRODUCTS & SOLUTIONS — 2x2 grid
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bgAlt }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12 reveal-on-scroll">
-            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-              What We Offer
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
+            <GoldBadge>What We Offer</GoldBadge>
+            <h2
+              className="text-3xl md:text-4xl font-display font-bold mb-3 mt-3"
+              style={{ color: G.cream }}
+            >
               Products &amp; Solutions
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-base">
+            <p
+              className="max-w-xl mx-auto text-base"
+              style={{ color: G.muted }}
+            >
               A complete range of electric mobility products designed for
               personal and commercial use.
             </p>
@@ -529,21 +754,50 @@ export default function AboutPage() {
               return (
                 <div
                   key={product.title}
-                  className="reveal-on-scroll bg-card border border-border rounded-2xl p-6 hover:border-brand-green/40 hover:shadow-green-glow-sm transition-all duration-300 group"
-                  style={{ animationDelay: `${i * 0.08}s` }}
+                  className="reveal-on-scroll rounded-2xl p-6 transition-all duration-300 group"
+                  style={{
+                    background: G.card,
+                    border: "1px solid rgba(201,168,76,0.2)",
+                    animationDelay: `${i * 0.08}s`,
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.border =
+                      "1px solid rgba(201,168,76,0.45)";
+                    (e.currentTarget as HTMLElement).style.boxShadow =
+                      "0 0 24px rgba(201,168,76,0.15), 0 8px 30px rgba(0,0,0,0.4)";
+                    (e.currentTarget as HTMLElement).style.transform =
+                      "translateY(-3px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.border =
+                      "1px solid rgba(201,168,76,0.2)";
+                    (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                    (e.currentTarget as HTMLElement).style.transform =
+                      "translateY(0)";
+                  }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-brand-green/10 flex items-center justify-center mb-4 group-hover:bg-brand-green/20 transition-colors">
-                    <Icon className="h-6 w-6 text-brand-green" />
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors"
+                    style={{ background: "rgba(201,168,76,0.12)" }}
+                  >
+                    <Icon style={{ color: G.primary }} className="h-6 w-6" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2 text-base">
+                  <h3
+                    className="font-semibold mb-2 text-base"
+                    style={{ color: G.cream }}
+                  >
                     {product.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                  <p
+                    className="text-sm leading-relaxed mb-4"
+                    style={{ color: G.muted }}
+                  >
                     {product.desc}
                   </p>
                   <Link
                     to={product.link}
-                    className="inline-flex items-center gap-1 text-brand-green text-sm font-semibold hover:gap-2 transition-all"
+                    className="inline-flex items-center gap-1 text-sm font-semibold hover:gap-2 transition-all"
+                    style={{ color: G.primary }}
                     data-ocid={`about.product_${i + 1}_link`}
                   >
                     Learn More <ArrowRight className="h-3.5 w-3.5" />
@@ -555,18 +809,35 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* After-Sales Support */}
-      <section className="py-20 bg-background">
+      {/* Thin gold section separator */}
+      <div
+        style={{
+          height: 1,
+          background:
+            "linear-gradient(to right, transparent, rgba(201,168,76,0.3), transparent)",
+        }}
+      />
+
+      {/* ══════════════════════════════════════════════════════════
+          AFTER-SALES SUPPORT
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bg }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-start max-w-5xl mx-auto reveal-on-scroll">
             <div>
-              <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-                Service &amp; Maintenance
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+              <div className="mb-3">
+                <GoldBadge>Service &amp; Maintenance</GoldBadge>
+              </div>
+              <h2
+                className="text-3xl md:text-4xl font-display font-bold mb-4"
+                style={{ color: G.cream }}
+              >
                 After-Sales Support You Can Rely On
               </h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed text-base">
+              <p
+                className="mb-6 leading-relaxed text-base"
+                style={{ color: G.muted }}
+              >
                 Reliable service support is a critical part of the electric
                 vehicle ecosystem. JSR Electric Vehicles ensures that
                 technicians and service partners are trained in EV systems to
@@ -576,10 +847,17 @@ export default function AboutPage() {
                 {services.map((service) => (
                   <li
                     key={service}
-                    className="flex items-center gap-3 text-sm text-foreground"
+                    className="flex items-center gap-3 text-sm"
+                    style={{ color: G.cream }}
                   >
-                    <div className="w-5 h-5 rounded-full bg-brand-green/15 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="h-3 w-3 text-brand-green" />
+                    <div
+                      className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: "rgba(201,168,76,0.15)" }}
+                    >
+                      <CheckCircle2
+                        style={{ color: G.primary }}
+                        className="h-3 w-3"
+                      />
                     </div>
                     {service}
                   </li>
@@ -593,16 +871,40 @@ export default function AboutPage() {
                 return (
                   <div
                     key={item.label}
-                    className="reveal-on-scroll bg-card border border-border rounded-2xl p-6 text-center hover:border-brand-green/40 hover:shadow-green-glow-sm transition-all duration-300 group"
-                    style={{ animationDelay: `${i * 0.08}s` }}
+                    className="reveal-on-scroll rounded-2xl p-6 text-center transition-all duration-300"
+                    style={{
+                      background: G.card,
+                      border: "1px solid rgba(201,168,76,0.2)",
+                      animationDelay: `${i * 0.08}s`,
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.border =
+                        "1px solid rgba(201,168,76,0.45)";
+                      (e.currentTarget as HTMLElement).style.boxShadow =
+                        "0 0 24px rgba(201,168,76,0.15)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.border =
+                        "1px solid rgba(201,168,76,0.2)";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                    }}
                   >
-                    <div className="w-16 h-16 rounded-2xl bg-brand-green/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-brand-green/20 transition-colors">
-                      <Icon className="h-8 w-8 text-brand-green" />
+                    <div
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-colors"
+                      style={{ background: "rgba(201,168,76,0.12)" }}
+                    >
+                      <Icon style={{ color: G.primary }} className="h-8 w-8" />
                     </div>
-                    <div className="text-sm font-bold text-foreground mb-1">
+                    <div
+                      className="text-sm font-bold mb-1"
+                      style={{ color: G.cream }}
+                    >
                       {item.label}
                     </div>
-                    <div className="text-xs text-muted-foreground leading-snug">
+                    <div
+                      className="text-xs leading-snug"
+                      style={{ color: G.muted }}
+                    >
                       {item.desc}
                     </div>
                   </div>
@@ -613,23 +915,42 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-20 bg-brand-light-gray">
+      {/* Thin gold section separator */}
+      <div
+        style={{
+          height: 1,
+          background:
+            "linear-gradient(to right, transparent, rgba(201,168,76,0.3), transparent)",
+        }}
+      />
+
+      {/* ══════════════════════════════════════════════════════════
+          TIMELINE — Our Journey
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bgAlt }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12 reveal-on-scroll">
-            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-              Company History
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
+            <GoldBadge>Company History</GoldBadge>
+            <h2
+              className="text-3xl md:text-4xl font-display font-bold mb-3 mt-3"
+              style={{ color: G.cream }}
+            >
               Our Journey
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-base">
+            <p
+              className="max-w-xl mx-auto text-base"
+              style={{ color: G.muted }}
+            >
               From a single showroom in Kodad to a growing EV network — our
               story of impact and growth.
             </p>
           </div>
           <div className="relative max-w-3xl mx-auto">
-            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-brand-green/20 -translate-x-px" />
+            {/* Timeline spine in gold */}
+            <div
+              className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px -translate-x-px"
+              style={{ background: "rgba(201,168,76,0.25)" }}
+            />
             {timelineItems.map((item, i) => (
               <div
                 key={`${item.year}-${item.title}`}
@@ -645,71 +966,112 @@ export default function AboutPage() {
                       : "md:text-left md:pl-8"
                   } pl-14 md:pl-0`}
                 >
-                  <div className="bg-card border border-border rounded-xl p-5 hover:border-brand-green/40 transition-colors">
+                  <div
+                    className="rounded-xl p-5 transition-colors"
+                    style={{
+                      background: G.card,
+                      border: "1px solid rgba(201,168,76,0.18)",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.border =
+                        "1px solid rgba(201,168,76,0.4)";
+                      (e.currentTarget as HTMLElement).style.boxShadow =
+                        "0 0 20px rgba(201,168,76,0.12)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.border =
+                        "1px solid rgba(201,168,76,0.18)";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                    }}
+                  >
                     {/* Large bold year */}
                     <span
                       className="text-2xl font-black font-display"
-                      style={{ color: "oklch(0.62 0.19 155)" }}
+                      style={{ color: G.bright }}
                     >
                       {item.year}
                     </span>
-                    <h3 className="font-semibold text-foreground mt-1 mb-2 text-base">
+                    <h3
+                      className="font-semibold mt-1 mb-2 text-base"
+                      style={{ color: G.cream }}
+                    >
                       {item.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: G.muted }}
+                    >
                       {item.desc}
                     </p>
                   </div>
                 </div>
-                <div className="absolute left-4 md:left-1/2 top-5 w-5 h-5 rounded-full bg-brand-green border-2 border-background shadow -translate-x-2.5 md:-translate-x-2.5" />
+                {/* Gold filled timeline dot */}
+                <div
+                  className="absolute left-4 md:left-1/2 top-5 w-5 h-5 rounded-full -translate-x-2.5 md:-translate-x-2.5 shadow"
+                  style={{
+                    background: G.primary,
+                    border: `2px solid ${G.bg}`,
+                    boxShadow: "0 0 10px rgba(201,168,76,0.5)",
+                  }}
+                />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Dealer & Franchise Network */}
-      <section className="py-16 bg-background">
+      {/* ══════════════════════════════════════════════════════════
+          DEALER & FRANCHISE NETWORK — City pills in gold
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-16" style={{ background: G.bg }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="max-w-4xl mx-auto reveal-on-scroll">
             <div className="text-center mb-8">
-              <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-                Partner Network
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+              <GoldBadge>Partner Network</GoldBadge>
+              <h2
+                className="text-3xl md:text-4xl font-display font-bold mb-4 mt-3"
+                style={{ color: G.cream }}
+              >
                 Dealer &amp; Franchise Network
               </h2>
-              <p className="text-muted-foreground mb-4 leading-relaxed max-w-xl mx-auto text-base">
+              <p
+                className="mb-4 leading-relaxed max-w-xl mx-auto text-base"
+                style={{ color: G.muted }}
+              >
                 Entrepreneurs and businesses can partner with JSR Electric
                 Vehicles to establish EV dealerships under our growing network.
                 Partners receive product supply, brand support, sales
                 assistance, and technical training.
               </p>
             </div>
-            {/* City pill tags */}
+            {/* Gold city pill tags */}
             <div className="mb-8">
-              <p className="text-center text-sm text-muted-foreground mb-4 uppercase tracking-widest font-semibold">
+              <p
+                className="text-center text-sm mb-4 uppercase tracking-widest font-semibold"
+                style={{ color: G.dim }}
+              >
                 Coverage Areas
               </p>
               <div className="flex flex-wrap justify-center gap-2">
                 {dealerCities.map((city) => (
                   <span
                     key={city}
-                    className="px-3 py-1.5 rounded-full text-sm font-medium"
+                    className="px-3 py-1.5 rounded-full text-sm font-medium transition-colors"
                     style={{
-                      background: "oklch(0.62 0.19 155 / 0.1)",
-                      border: "1px solid oklch(0.62 0.19 155 / 0.25)",
-                      color: "oklch(0.62 0.19 155)",
+                      background: "rgba(201,168,76,0.08)",
+                      border: "1px solid rgba(201,168,76,0.3)",
+                      color: G.primary,
                     }}
                   >
                     {city}
                   </span>
                 ))}
                 <span
-                  className="px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground"
+                  className="px-3 py-1.5 rounded-full text-sm font-medium"
                   style={{
-                    background: "oklch(0.88 0.01 145 / 0.5)",
-                    border: "1px solid oklch(0.88 0.01 145)",
+                    background: "rgba(201,168,76,0.05)",
+                    border: "1px solid rgba(201,168,76,0.15)",
+                    color: G.muted,
                   }}
                 >
                   + more expanding
@@ -718,7 +1080,22 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <Link to="/franchise" data-ocid="about.franchise_button">
-                <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold px-8">
+                <Button
+                  className="font-semibold px-8"
+                  style={{
+                    background: G.primary,
+                    color: "#0a0804",
+                    border: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background =
+                      G.bright;
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background =
+                      G.primary;
+                  }}
+                >
                   Explore Franchise Opportunity{" "}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -728,17 +1105,32 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Future Plans */}
-      <section className="py-20 bg-brand-light-gray">
+      {/* Thin gold section separator */}
+      <div
+        style={{
+          height: 1,
+          background:
+            "linear-gradient(to right, transparent, rgba(201,168,76,0.3), transparent)",
+        }}
+      />
+
+      {/* ══════════════════════════════════════════════════════════
+          FUTURE PLANS — Dark tiles with gold left accent
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bgAlt }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="text-center mb-12 reveal-on-scroll">
-            <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-              What&apos;s Next
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-3">
+            <GoldBadge>What&apos;s Next</GoldBadge>
+            <h2
+              className="text-3xl md:text-4xl font-display font-bold mb-3 mt-3"
+              style={{ color: G.cream }}
+            >
               Future Plans
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-base">
+            <p
+              className="max-w-xl mx-auto text-base"
+              style={{ color: G.muted }}
+            >
               We are building for the long term — growing our footprint, our
               products, and our technology.
             </p>
@@ -747,36 +1139,50 @@ export default function AboutPage() {
             {futurePlans.map((plan, i) => (
               <div
                 key={plan}
-                className="reveal-on-scroll flex items-start gap-3 p-5 rounded-xl border transition-all duration-300 group"
+                className="reveal-on-scroll flex items-start gap-3 p-5 rounded-xl transition-all duration-300"
                 style={{
-                  background: "oklch(0.93 0.004 145)",
-                  borderColor: "oklch(0.85 0.01 145)",
+                  background: "oklch(0.075 0.004 70)",
+                  border: "1px solid rgba(201,168,76,0.15)",
+                  borderLeft: "3px solid rgba(201,168,76,0.5)",
                   animationDelay: `${i * 0.07}s`,
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background =
-                    "oklch(0.90 0.005 145)";
-                  (e.currentTarget as HTMLElement).style.borderColor =
-                    "oklch(0.62 0.19 155 / 0.4)";
+                  (e.currentTarget as HTMLElement).style.border =
+                    "1px solid rgba(201,168,76,0.35)";
+                  (e.currentTarget as HTMLElement).style.borderLeft =
+                    `3px solid ${G.primary}`;
                   (e.currentTarget as HTMLElement).style.transform =
                     "translateY(-2px)";
                   (e.currentTarget as HTMLElement).style.boxShadow =
-                    "0 4px 16px rgba(0,0,0,0.08)";
+                    "0 4px 20px rgba(0,0,0,0.4), 0 0 16px rgba(201,168,76,0.1)";
+                  (e.currentTarget as HTMLElement).style.background =
+                    "oklch(0.10 0.006 73)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background =
-                    "oklch(0.93 0.004 145)";
-                  (e.currentTarget as HTMLElement).style.borderColor =
-                    "oklch(0.85 0.01 145)";
+                  (e.currentTarget as HTMLElement).style.border =
+                    "1px solid rgba(201,168,76,0.15)";
+                  (e.currentTarget as HTMLElement).style.borderLeft =
+                    "3px solid rgba(201,168,76,0.5)";
                   (e.currentTarget as HTMLElement).style.transform =
                     "translateY(0)";
                   (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                  (e.currentTarget as HTMLElement).style.background =
+                    "oklch(0.075 0.004 70)";
                 }}
               >
-                <div className="w-6 h-6 rounded-full bg-brand-green/15 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-brand-green/25 transition-colors">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-brand-green" />
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: "rgba(201,168,76,0.15)" }}
+                >
+                  <CheckCircle2
+                    style={{ color: G.primary }}
+                    className="h-3.5 w-3.5"
+                  />
                 </div>
-                <p className="text-sm text-foreground leading-relaxed font-medium">
+                <p
+                  className="text-sm leading-relaxed font-medium"
+                  style={{ color: G.cream }}
+                >
                   {plan}
                 </p>
               </div>
@@ -785,24 +1191,33 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Committed to Sustainable Mobility — 2x2 grid */}
-      <section className="py-20 bg-background">
+      {/* ══════════════════════════════════════════════════════════
+          SUSTAINABILITY — 2x2 grid with gold icons
+      ══════════════════════════════════════════════════════════ */}
+      <section className="py-20" style={{ background: G.bg }}>
         <div className="container mx-auto px-4 lg:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-start max-w-5xl mx-auto">
             <div className="reveal-on-scroll">
-              <Badge className="mb-3 bg-brand-green/10 text-brand-green border-brand-green/20 text-xs uppercase tracking-widest">
-                Our Commitment
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+              <GoldBadge>Our Commitment</GoldBadge>
+              <h2
+                className="text-3xl md:text-4xl font-display font-bold mb-4 mt-3"
+                style={{ color: G.cream }}
+              >
                 Committed to Sustainable Mobility
               </h2>
-              <p className="text-muted-foreground mb-4 leading-relaxed text-base">
+              <p
+                className="mb-4 leading-relaxed text-base"
+                style={{ color: G.muted }}
+              >
                 Electric vehicles help reduce carbon emissions, decrease
                 dependence on fossil fuels, and lower transportation costs for
                 everyday users. JSR Electric Vehicles supports this transition
                 by promoting environmentally responsible mobility solutions.
               </p>
-              <p className="text-muted-foreground leading-relaxed text-base">
+              <p
+                className="leading-relaxed text-base"
+                style={{ color: G.muted }}
+              >
                 We are building infrastructure and partnerships that support the
                 long-term growth of electric vehicles — from our showrooms to
                 our service centers, franchise network, and EV conversion
@@ -816,24 +1231,48 @@ export default function AboutPage() {
                 return (
                   <div
                     key={item.title}
-                    className="reveal-on-scroll bg-card border border-border rounded-2xl p-5 hover:border-brand-green/40 hover:shadow-green-glow-sm transition-all duration-300 group"
-                    style={{ animationDelay: `${i * 0.08}s` }}
+                    className="reveal-on-scroll rounded-2xl p-5 transition-all duration-300"
+                    style={{
+                      background: G.card,
+                      border: "1px solid rgba(201,168,76,0.2)",
+                      animationDelay: `${i * 0.08}s`,
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLElement).style.border =
+                        "1px solid rgba(201,168,76,0.45)";
+                      (e.currentTarget as HTMLElement).style.boxShadow =
+                        "0 0 24px rgba(201,168,76,0.15)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLElement).style.border =
+                        "1px solid rgba(201,168,76,0.2)";
+                      (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                    }}
                   >
-                    {/* Enlarged icon */}
-                    <div className="w-14 h-14 rounded-xl bg-brand-green/10 flex items-center justify-center mb-4 group-hover:bg-brand-green/20 transition-colors">
-                      <Icon className="h-7 w-7 text-brand-green" />
+                    {/* Gold sustainability icon */}
+                    <div
+                      className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-colors"
+                      style={{ background: "rgba(201,168,76,0.12)" }}
+                    >
+                      <Icon style={{ color: G.primary }} className="h-7 w-7" />
                     </div>
-                    <h3 className="font-bold text-foreground mb-1 text-sm">
+                    <h3
+                      className="font-bold mb-1 text-sm"
+                      style={{ color: G.cream }}
+                    >
                       {item.title}
                     </h3>
-                    {/* Stat line */}
+                    {/* Gold stat line */}
                     <div
                       className="text-xs font-semibold mb-2"
-                      style={{ color: "oklch(0.62 0.19 155)" }}
+                      style={{ color: G.primary }}
                     >
                       {item.stat}
                     </div>
-                    <p className="text-muted-foreground text-xs leading-relaxed">
+                    <p
+                      className="text-xs leading-relaxed"
+                      style={{ color: G.muted }}
+                    >
                       {item.desc}
                     </p>
                   </div>
@@ -844,37 +1283,108 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Vision Closing */}
-      <section className="py-20 section-gradient reveal-on-scroll">
-        <div className="container mx-auto px-4 lg:px-6 text-center max-w-4xl">
-          <Badge className="mb-4 bg-brand-green/20 text-brand-green border-brand-green/30 text-xs uppercase tracking-widest">
-            Our Vision
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-display font-bold text-white mb-6">
+      {/* Thin gold section separator */}
+      <div
+        style={{
+          height: 1,
+          background:
+            "linear-gradient(to right, transparent, rgba(201,168,76,0.4), transparent)",
+        }}
+      />
+
+      {/* ══════════════════════════════════════════════════════════
+          VISION CLOSING — Royal gold closing statement
+      ══════════════════════════════════════════════════════════ */}
+      <section
+        className="py-24 reveal-on-scroll"
+        style={{
+          background:
+            "linear-gradient(135deg, oklch(0.06 0.004 70) 0%, oklch(0.10 0.009 75) 50%, oklch(0.06 0.004 70) 100%)",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Large gold radial glow for atmosphere */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 70% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative z-10 container mx-auto px-4 lg:px-6 text-center max-w-4xl">
+          <GoldBadge>Our Vision</GoldBadge>
+
+          <div className="my-6">
+            <GoldDivider text="── ✦ ──" />
+          </div>
+
+          <h2
+            className="text-3xl md:text-5xl font-display font-bold mb-6"
+            style={{ color: G.cream }}
+          >
             Building a Trusted{" "}
-            <span className="text-brand-green">Electric Mobility Network</span>{" "}
+            <span style={{ color: G.primary }}>Electric Mobility Network</span>{" "}
             Across India
           </h2>
-          <p className="text-white/65 text-lg leading-relaxed max-w-3xl mx-auto">
+          <p
+            className="text-lg leading-relaxed max-w-3xl mx-auto mb-10"
+            style={{ color: G.muted }}
+          >
             To become a trusted electric mobility brand with a strong network of
             EV dealerships, service centers, and sustainable transportation
             solutions — making clean electric transport the norm across India,
             one community at a time.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
+
+          <div className="flex flex-wrap justify-center gap-4">
             <Link to="/vehicles" data-ocid="about.vehicles_button">
-              <Button className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold px-8">
+              <Button
+                className="font-semibold px-8"
+                style={{
+                  background: G.primary,
+                  color: "#0a0804",
+                  border: "none",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = G.bright;
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = G.primary;
+                }}
+              >
                 Explore Our Vehicles <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </Link>
             <Link to="/contact" data-ocid="about.contact_button">
               <Button
                 variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 bg-white/5 px-8"
+                className="px-8"
+                style={{
+                  background: "transparent",
+                  border: "1px solid rgba(201,168,76,0.45)",
+                  color: G.primary,
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background =
+                    "rgba(201,168,76,0.1)";
+                  (e.currentTarget as HTMLElement).style.border =
+                    "1px solid rgba(201,168,76,0.7)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background =
+                    "transparent";
+                  (e.currentTarget as HTMLElement).style.border =
+                    "1px solid rgba(201,168,76,0.45)";
+                }}
               >
                 Contact Us
               </Button>
             </Link>
+          </div>
+
+          <div className="mt-10">
+            <GoldDivider text="✦" />
           </div>
         </div>
       </section>

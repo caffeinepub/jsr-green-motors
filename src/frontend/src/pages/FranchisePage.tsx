@@ -1,9 +1,11 @@
+import { PhoneOtpVerifier } from "@/components/PhoneOtpVerifier";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddFranchiseApplication } from "@/hooks/useQueries";
+import { saveLead } from "@/lib/supabase";
 import {
   ArrowRight,
   CheckCircle2,
@@ -65,6 +67,7 @@ const steps = [
 
 export default function FranchisePage() {
   const [success, setSuccess] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const franchiseMutation = useAddFranchiseApplication();
   const [form, setForm] = useState({
     name: "",
@@ -92,11 +95,16 @@ export default function FranchisePage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    if (e.target.name === "phone") setOtpVerified(false);
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!otpVerified) {
+      toast.error("Please verify your phone number before submitting.");
+      return;
+    }
     const investmentCapacity = BigInt(
       Number.parseInt(form.investment_capacity, 10) || 0,
     );
@@ -112,6 +120,13 @@ export default function FranchisePage() {
     const msg = encodeURIComponent(
       `Hello JSR Electric Vehicles,\n\nI am interested in your Franchise Opportunity.\n\nName: ${form.name}\nPhone: ${form.phone}\nEmail: ${form.email}\nCity: ${form.city}\nState: ${form.state}\nInvestment Budget: ₹${form.investment_capacity}\nMessage: ${form.message || "N/A"}`,
     );
+    saveLead({
+      form_type: "franchise",
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      message: `City: ${form.city}, State: ${form.state}. ${form.message || ""}`,
+    }).catch(() => {});
     window.open(`https://wa.me/919948955517?text=${msg}`, "_blank");
     setSuccess(true);
     toast.success(
@@ -380,6 +395,12 @@ export default function FranchisePage() {
                       onChange={handleChange}
                       required
                     />
+                    <PhoneOtpVerifier
+                      phone={form.phone}
+                      verified={otpVerified}
+                      onVerified={() => setOtpVerified(true)}
+                      onReset={() => setOtpVerified(false)}
+                    />
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -451,8 +472,8 @@ export default function FranchisePage() {
                 </div>
                 <Button
                   type="submit"
-                  disabled={franchiseMutation.isPending}
-                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+                  disabled={franchiseMutation.isPending || !otpVerified}
+                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold disabled:opacity-60"
                 >
                   {franchiseMutation.isPending ? (
                     <>
@@ -463,6 +484,11 @@ export default function FranchisePage() {
                     "Apply via WhatsApp"
                   )}
                 </Button>
+                {!otpVerified && (
+                  <p className="text-xs text-center text-muted-foreground">
+                    Verify your phone number to enable submission.
+                  </p>
+                )}
               </form>
             )}
           </div>

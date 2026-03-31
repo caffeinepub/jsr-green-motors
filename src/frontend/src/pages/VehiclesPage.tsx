@@ -1,19 +1,9 @@
 import QuoteModal from "@/components/QuoteModal";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { STATIC_VEHICLES } from "@/data/vehicles";
 import { useAllVehicles } from "@/hooks/useQueries";
 import { formatPrice, getVehicleImage } from "@/utils/helpers";
 import { Link } from "@tanstack/react-router";
-import {
-  Battery,
-  Gauge,
-  GitCompareArrows,
-  Ruler,
-  SlidersHorizontal,
-  Zap,
-} from "lucide-react";
+import { GitCompareArrows, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Vehicle } from "../backend.d";
 
@@ -35,15 +25,16 @@ export default function VehiclesPage() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState<string>("");
   const [compareList, setCompareList] = useState<bigint[]>([]);
-  const { data: vehicles, isLoading } = useAllVehicles();
+  const { data: vehicles } = useAllVehicles();
+
   useEffect(() => {
     document.title = "Electric Scooters & Bikes | JSR Electric Vehicles Kodad";
   }, []);
 
-  // Use backend data if available, otherwise fall back to static list
   const vehicleSource = (
     vehicles && vehicles.length > 0 ? vehicles : STATIC_VEHICLES
   ) as Vehicle[];
+
   const filteredVehicles: Vehicle[] = vehicleSource.filter((v) => {
     const categoryMatch =
       activeCategory === "All" || v.category === activeCategory;
@@ -58,9 +49,7 @@ export default function VehiclesPage() {
 
   const toggleCompare = (id: bigint) => {
     setCompareList((prev) => {
-      if (prev.some((v) => v === id)) {
-        return prev.filter((v) => v !== id);
-      }
+      if (prev.some((v) => v === id)) return prev.filter((v) => v !== id);
       if (prev.length >= 2) return prev;
       return [...prev, id];
     });
@@ -73,61 +62,129 @@ export default function VehiclesPage() {
   };
 
   return (
-    <main className="pt-20">
+    <main style={{ background: "#000", minHeight: "100vh" }}>
       {/* Header */}
-      <section className="py-16 section-gradient">
+      <section
+        className="pt-32 pb-12 hex-pattern reveal-section"
+        style={{ borderBottom: "1px solid rgba(0,255,178,0.08)" }}
+      >
         <div className="container mx-auto px-4 lg:px-6 text-center">
-          <Badge className="mb-3 bg-brand-green/20 text-brand-green border-brand-green/30 text-xs uppercase tracking-widest">
-            Our Fleet
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-            Electric Vehicles
+          <div
+            className="font-orbitron text-xs tracking-[4px] mb-3"
+            style={{ color: "#00FFB2", opacity: 0.7 }}
+          >
+            {"// VEHICLE CATALOG"}
+          </div>
+          <h1 className="font-orbitron font-black mb-4">
+            <span
+              style={{
+                color: "#F0FFF8",
+                fontSize: "clamp(28px, 5vw, 56px)",
+                display: "block",
+              }}
+            >
+              CHOOSE YOUR
+            </span>
+            <span
+              style={{
+                color: "#00FFB2",
+                fontSize: "clamp(28px, 5vw, 56px)",
+                display: "block",
+                textShadow: "0 0 40px rgba(0,255,178,0.4)",
+              }}
+            >
+              WEAPON.
+            </span>
           </h1>
-          <p className="text-white/65 max-w-2xl mx-auto">
-            Explore our premium selection of electric scooters, bikes, and
-            e-bikes from leading brands. Find your perfect electric ride.
+          <div className="neon-line mx-auto" style={{ maxWidth: "200px" }} />
+          <p
+            className="mt-4 font-space"
+            style={{ color: "rgba(240,255,248,0.45)", fontSize: "14px" }}
+          >
+            {filteredVehicles.length} vehicles across 8+ premium EV brands
           </p>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="sticky top-16 z-30 bg-background/95 backdrop-blur-md border-b border-border py-3">
+      <section
+        className="sticky z-30 py-4"
+        style={{
+          top: "72px",
+          background: "rgba(0,0,0,0.92)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(0,255,178,0.08)",
+        }}
+      >
         <div className="container mx-auto px-4 lg:px-6 space-y-2">
-          {/* Category filter */}
-          <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide">
-            <SlidersHorizontal className="h-4 w-4 text-muted-foreground shrink-0" />
+          {/* Category pills */}
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <SlidersHorizontal
+              className="h-3.5 w-3.5 shrink-0"
+              style={{ color: "rgba(0,255,178,0.5)" }}
+            />
             {categories.map((cat) => (
               <button
                 type="button"
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                data-ocid={"vehicles.tab"}
-                className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 ${
-                  activeCategory === cat
-                    ? "bg-brand-green text-white border-brand-green"
-                    : "border-border text-muted-foreground hover:border-brand-green/40 hover:text-foreground"
-                }`}
+                data-ocid="vehicles.tab"
+                className="shrink-0 px-4 py-1.5 rounded-full text-xs font-orbitron tracking-widest transition-all duration-200"
+                style={{
+                  background:
+                    activeCategory === cat ? "#00FFB2" : "rgba(0,255,178,0.04)",
+                  border:
+                    activeCategory === cat
+                      ? "1px solid #00FFB2"
+                      : "1px solid rgba(0,255,178,0.15)",
+                  color:
+                    activeCategory === cat ? "#000" : "rgba(240,255,248,0.6)",
+                  boxShadow:
+                    activeCategory === cat
+                      ? "0 0 20px rgba(0,255,178,0.3)"
+                      : "none",
+                  fontSize: "10px",
+                }}
               >
                 {cat}
               </button>
             ))}
           </div>
-          {/* Brand filter */}
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
-            <span className="text-xs text-muted-foreground shrink-0 font-medium">
-              Brand:
+          {/* Brand pills */}
+          <div
+            className="flex items-center gap-2 overflow-x-auto pb-1"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <span
+              className="font-orbitron text-[9px] tracking-widest shrink-0"
+              style={{ color: "rgba(0,255,178,0.4)" }}
+            >
+              BRAND:
             </span>
             {brands.map((brand) => (
               <button
                 type="button"
                 key={brand}
                 onClick={() => setActiveBrand(brand)}
-                data-ocid={"vehicles.tab"}
-                className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium border transition-all duration-200 ${
-                  activeBrand === brand
-                    ? "bg-brand-green/15 text-brand-green border-brand-green/60"
-                    : "border-border/60 text-muted-foreground hover:border-brand-green/30 hover:text-foreground"
-                }`}
+                data-ocid="vehicles.tab"
+                className="shrink-0 px-3 py-1 rounded-full transition-all duration-200"
+                style={{
+                  background:
+                    activeBrand === brand
+                      ? "rgba(0,255,178,0.1)"
+                      : "transparent",
+                  border:
+                    activeBrand === brand
+                      ? "1px solid rgba(0,255,178,0.5)"
+                      : "1px solid rgba(0,255,178,0.1)",
+                  color:
+                    activeBrand === brand ? "#00FFB2" : "rgba(240,255,248,0.5)",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: "11px",
+                }}
               >
                 {brand}
               </button>
@@ -137,263 +194,279 @@ export default function VehiclesPage() {
       </section>
 
       {/* Vehicle Grid */}
-      <section className="py-12 bg-background">
+      <section className="py-12">
         <div className="container mx-auto px-4 lg:px-6">
-          {isLoading ? (
-            <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              data-ocid="vehicles.loading_state"
-            >
-              {Array.from({ length: 6 }, (_, i) => `sk-${i}`).map((skId) => (
-                <div
-                  key={skId}
-                  className="rounded-2xl overflow-hidden border border-border"
-                >
-                  <Skeleton className="h-52 w-full" />
-                  <div className="p-5 space-y-3">
-                    <Skeleton className="h-5 w-2/3" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-9 w-full" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : filteredVehicles.length === 0 ? (
+          {filteredVehicles.length === 0 ? (
             <div className="text-center py-20" data-ocid="vehicles.empty_state">
-              <div className="text-6xl mb-4">⚡</div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                No vehicles found
+              <div
+                className="text-5xl mb-4"
+                style={{ filter: "drop-shadow(0 0 20px #00FFB2)" }}
+              >
+                ⚡
+              </div>
+              <h3
+                className="font-orbitron text-lg mb-2"
+                style={{ color: "#F0FFF8" }}
+              >
+                NO VEHICLES FOUND
               </h3>
-              <p className="text-muted-foreground">
+              <p
+                style={{
+                  color: "rgba(240,255,248,0.4)",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                }}
+              >
                 Try a different category or brand filter.
               </p>
             </div>
           ) : (
-            <>
-              <div className="text-sm text-muted-foreground mb-6">
-                Showing {filteredVehicles.length} vehicle
-                {filteredVehicles.length !== 1 ? "s" : ""}
-                {activeCategory !== "All" && ` in ${activeCategory}`}
-                {activeBrand !== "All Brands" && ` · ${activeBrand}`}
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredVehicles.map((vehicle, idx) => {
-                  const isInCompare = compareList.some((v) => v === vehicle.id);
-                  const compareDisabled =
-                    !isInCompare && compareList.length >= 2;
-                  return (
-                    <article
-                      key={vehicle.id.toString()}
-                      data-ocid={`vehicles.item.${idx + 1}`}
-                      className={`bg-card border rounded-2xl overflow-hidden transition-all duration-300 group flex flex-col ${
-                        isInCompare
-                          ? "border-brand-green shadow-[0_0_0_2px_oklch(0.62_0.19_155/0.4)]"
-                          : "border-border hover:border-brand-green/50"
-                      }`}
-                      style={{
-                        boxShadow: isInCompare
-                          ? undefined
-                          : "0 2px 8px rgba(0,0,0,0.06)",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isInCompare) {
-                          (e.currentTarget as HTMLElement).style.boxShadow =
-                            "0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px oklch(0.62 0.19 155 / 0.3)";
-                          (e.currentTarget as HTMLElement).style.transform =
-                            "translateY(-2px)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isInCompare) {
-                          (e.currentTarget as HTMLElement).style.boxShadow =
-                            "0 2px 8px rgba(0,0,0,0.06)";
-                          (e.currentTarget as HTMLElement).style.transform =
-                            "translateY(0)";
-                        }
-                      }}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredVehicles.map((vehicle, idx) => {
+                const isInCompare = compareList.some((v) => v === vehicle.id);
+                const compareDisabled = !isInCompare && compareList.length >= 2;
+                return (
+                  <article
+                    key={vehicle.id.toString()}
+                    data-ocid={`vehicles.item.${idx + 1}`}
+                    className="holo-card flex flex-col"
+                    style={{
+                      boxShadow: isInCompare
+                        ? "0 0 0 2px #00FFB2, 0 20px 60px rgba(0,255,178,0.2)"
+                        : undefined,
+                    }}
+                  >
+                    {/* Corner accents */}
+                    <div className="corner-tl" />
+                    <div className="corner-tr" />
+                    <div className="corner-bl" />
+                    <div className="corner-br" />
+
+                    {/* Image section */}
+                    <div
+                      className="relative overflow-hidden"
+                      style={{ height: "200px" }}
                     >
-                      {/* Image with gradient bleed */}
-                      <div className="relative overflow-hidden h-52">
-                        <img
-                          src={getVehicleImage(
-                            vehicle.id,
-                            vehicle.brand,
-                            vehicle.name,
-                          )}
-                          alt={vehicle.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                          loading="lazy"
-                        />
-                        <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand-green/90 text-white backdrop-blur-sm">
-                            {vehicle.category}
-                          </span>
-                          {vehicle.is_featured && (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-500/90 text-white backdrop-blur-sm">
-                              Featured
-                            </span>
-                          )}
-                        </div>
-                        {/* Range badge */}
-                        <div className="absolute top-3 right-3">
-                          <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-brand-dark/85 text-brand-green backdrop-blur-sm border border-brand-green/30">
-                            {Number(vehicle.range_km)} km range
-                          </span>
-                        </div>
-                        {/* Use case tag */}
-                        <div className="absolute bottom-12 left-3">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/90 text-brand-dark">
-                            {Number(vehicle.range_km) > 100 ||
-                            Number(vehicle.motor_watts) > 1000
-                              ? "Best for Delivery"
-                              : "Best for City"}
-                          </span>
-                        </div>
-                        {/* Compare indicator */}
-                        {isInCompare && (
-                          <div className="absolute bottom-12 right-3">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-brand-green text-white">
-                              ✓ Comparing
-                            </span>
-                          </div>
+                      <div className="absolute inset-0 holo-scanline z-10 pointer-events-none" />
+                      <img
+                        src={getVehicleImage(
+                          vehicle.id,
+                          vehicle.brand,
+                          vehicle.name,
                         )}
-                        {/* Gradient bleed into card body */}
-                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                        alt={vehicle.name}
+                        className="holo-image-filter w-full h-full"
+                        style={{ objectFit: "cover" }}
+                        loading="lazy"
+                      />
+                      {/* Range badge */}
+                      <div
+                        className="absolute top-3 right-3 px-2.5 py-1 text-xs font-bebas"
+                        style={{
+                          background: "#00FFB2",
+                          color: "#000",
+                          transform: "rotateX(10deg)",
+                          fontSize: "13px",
+                          letterSpacing: "1px",
+                          boxShadow: "0 4px 12px rgba(0,255,178,0.4)",
+                        }}
+                      >
+                        {Number(vehicle.range_km)} KM
+                      </div>
+                      {vehicle.is_featured && (
+                        <div
+                          className="absolute top-3 left-3 px-2.5 py-1 text-xs font-orbitron"
+                          style={{
+                            background: "rgba(255,77,0,0.9)",
+                            color: "#fff",
+                            fontSize: "9px",
+                            letterSpacing: "1px",
+                          }}
+                        >
+                          FEATURED
+                        </div>
+                      )}
+                      {isInCompare && (
+                        <div
+                          className="absolute bottom-2 right-2 px-2 py-0.5 text-xs font-orbitron"
+                          style={{
+                            background: "#00FFB2",
+                            color: "#000",
+                            fontSize: "9px",
+                          }}
+                        >
+                          ✓ COMPARING
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card body */}
+                    <div className="px-5 pt-4 pb-5 flex flex-col flex-1">
+                      {/* Brand */}
+                      <div
+                        className="font-orbitron text-[10px] tracking-[3px] mb-1 pl-3"
+                        style={{
+                          color: "#00FFB2",
+                          borderLeft: "2px solid #00FFB2",
+                          opacity: 0.8,
+                        }}
+                      >
+                        {vehicle.brand.toUpperCase()}
                       </div>
 
-                      <div className="px-5 pb-5 -mt-1 flex flex-col flex-1">
-                        <h3 className="font-bold text-foreground text-base leading-tight">
-                          {vehicle.name}
-                        </h3>
-                        <p className="text-muted-foreground text-xs mt-0.5 mb-4 font-medium uppercase tracking-wide">
-                          {vehicle.brand}
-                        </p>
+                      {/* Model name */}
+                      <h3
+                        className="font-orbitron font-bold mb-4 leading-tight"
+                        style={{ color: "#F0FFF8", fontSize: "16px" }}
+                      >
+                        {vehicle.name}
+                      </h3>
 
-                        {/* Spec chips */}
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
-                            <Ruler className="h-3 w-3 text-brand-green" />
-                            {Number(vehicle.range_km)} km
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
-                            <Gauge className="h-3 w-3 text-brand-green" />
-                            {Number(vehicle.top_speed)} km/h
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-foreground">
-                            <Battery className="h-3 w-3 text-brand-green" />
-                            {vehicle.battery_kwh} kWh
-                          </span>
-                        </div>
-
-                        {/* Price row */}
-                        <div className="mt-auto pt-3 border-t border-border">
-                          <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">
-                            Price Range
-                          </div>
-                          <div
-                            className="font-black text-base font-display mb-3"
-                            style={{ color: "oklch(0.62 0.19 155)" }}
-                          >
-                            {formatPrice(vehicle.price_min)} –{" "}
-                            {formatPrice(vehicle.price_max)}
-                          </div>
-
-                          {/* Buttons */}
-                          <div className="flex flex-col gap-2">
-                            <div className="flex gap-2">
-                              <Link
-                                to="/vehicles/$id"
-                                params={{ id: vehicle.id.toString() }}
-                                className="flex-1"
-                                data-ocid={"vehicles.primary_button"}
-                              >
-                                <Button
-                                  className="w-full bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white text-sm font-semibold transition-all duration-150"
-                                  style={{
-                                    boxShadow:
-                                      "0 0 12px oklch(0.62 0.19 155 / 0.25)",
-                                  }}
-                                >
-                                  View Details
-                                </Button>
-                              </Link>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                className="shrink-0 border-brand-green/40 text-brand-green hover:bg-brand-green/10 hover:border-brand-green transition-colors"
-                                onClick={() => openQuote(vehicle.name)}
-                                title="Get Quote"
-                                data-ocid={"vehicles.secondary_button"}
-                              >
-                                <Zap className="h-4 w-4" />
-                              </Button>
+                      {/* HUD stats row */}
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        {[
+                          {
+                            value: Number(vehicle.range_km).toString(),
+                            label: "KM",
+                          },
+                          {
+                            value: Number(vehicle.top_speed).toString(),
+                            label: "KM/H",
+                          },
+                          {
+                            value: Number(vehicle.motor_watts).toString(),
+                            label: "WATTS",
+                          },
+                        ].map((spec) => (
+                          <div key={spec.label} className="text-center">
+                            <div
+                              className="font-bebas leading-none"
+                              style={{
+                                color: "#00FFB2",
+                                fontSize: "26px",
+                                textShadow: "0 0 12px rgba(0,255,178,0.4)",
+                              }}
+                            >
+                              {spec.value}
                             </div>
-                            <Link
-                              to="/contact"
-                              className="w-full"
-                              data-ocid={"vehicles.secondary_button"}
+                            <div
+                              className="font-orbitron"
+                              style={{
+                                color: "rgba(240,255,248,0.3)",
+                                fontSize: "8px",
+                                letterSpacing: "1px",
+                              }}
                             >
-                              <Button
-                                variant="outline"
-                                className="w-full border-brand-green/40 text-brand-green hover:bg-brand-green/10 hover:border-brand-green text-sm font-semibold transition-all duration-150"
-                              >
-                                Get Best Price
-                              </Button>
-                            </Link>
-                            {/* Compare toggle */}
-                            <button
-                              type="button"
-                              onClick={() => toggleCompare(vehicle.id)}
-                              disabled={compareDisabled}
-                              data-ocid={"vehicles.toggle"}
-                              className={`w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-medium border transition-all duration-200 ${
-                                isInCompare
-                                  ? "bg-brand-green/15 border-brand-green text-brand-green"
-                                  : compareDisabled
-                                    ? "border-border/40 text-muted-foreground/40 cursor-not-allowed"
-                                    : "border-border/60 text-muted-foreground hover:border-brand-green/40 hover:text-foreground"
-                              }`}
-                            >
-                              <GitCompareArrows className="h-3.5 w-3.5" />
-                              {isInCompare ? "Remove from Compare" : "Compare"}
-                            </button>
+                              {spec.label}
+                            </div>
                           </div>
+                        ))}
+                      </div>
+
+                      {/* Price */}
+                      <div
+                        className="font-bebas mb-4"
+                        style={{
+                          color: "#00FFB2",
+                          fontSize: "24px",
+                          textShadow: "0 0 12px rgba(0,255,178,0.3)",
+                        }}
+                      >
+                        FROM {formatPrice(vehicle.price_min)}
+                      </div>
+
+                      {/* Spacer */}
+                      <div className="flex-1" />
+
+                      {/* Action buttons */}
+                      <div className="space-y-2">
+                        <Link
+                          to="/vehicles/$id"
+                          params={{ id: vehicle.id.toString() }}
+                          className="block"
+                        >
+                          <button
+                            type="button"
+                            className="btn-neon w-full py-2.5 rounded text-xs"
+                            data-ocid={`vehicles.item.${idx + 1}`}
+                          >
+                            VIEW SPECS
+                          </button>
+                        </Link>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            className="btn-ghost-neon py-2 rounded text-[10px]"
+                            onClick={() => openQuote(vehicle.name)}
+                            data-ocid="vehicles.secondary_button"
+                          >
+                            GET PRICE
+                          </button>
+                          <button
+                            type="button"
+                            className="py-2 rounded text-[10px] font-orbitron transition-all"
+                            onClick={() => toggleCompare(vehicle.id)}
+                            disabled={compareDisabled}
+                            data-ocid="vehicles.toggle"
+                            style={{
+                              background: isInCompare
+                                ? "rgba(0,255,178,0.15)"
+                                : "transparent",
+                              border: "1px solid rgba(0,255,178,0.25)",
+                              color: isInCompare
+                                ? "#00FFB2"
+                                : "rgba(240,255,248,0.5)",
+                              opacity: compareDisabled ? 0.3 : 1,
+                            }}
+                          >
+                            ⚡ COMPARE
+                          </button>
                         </div>
                       </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           )}
         </div>
       </section>
 
       {/* Compare floating bar */}
       {compareList.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl border border-brand-green/40 bg-brand-dark/95 backdrop-blur-md">
-          <span className="text-white text-sm font-medium">
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-full"
+          style={{
+            background: "rgba(0,0,0,0.95)",
+            border: "1px solid rgba(0,255,178,0.4)",
+            backdropFilter: "blur(20px)",
+            boxShadow: "0 0 40px rgba(0,255,178,0.15)",
+          }}
+        >
+          <span
+            className="font-orbitron text-xs tracking-wider"
+            style={{ color: "rgba(240,255,248,0.8)" }}
+          >
             {compareList.length === 2
-              ? "2 vehicles selected"
-              : "1 vehicle selected — pick one more"}
+              ? "2 VEHICLES SELECTED"
+              : "1 VEHICLE — PICK ONE MORE"}
           </span>
           {compareList.length === 2 && (
-            <Button
-              size="sm"
+            <button
+              type="button"
               onClick={handleCompareNow}
               data-ocid="vehicles.primary_button"
-              className="bg-brand-green hover:bg-brand-green/90 text-white font-semibold text-xs px-4 py-1.5 h-auto"
+              className="btn-neon px-4 py-1.5 rounded-full text-xs flex items-center gap-1.5"
             >
-              <GitCompareArrows className="h-3.5 w-3.5 mr-1.5" />
-              Compare Now
-            </Button>
+              <GitCompareArrows className="h-3.5 w-3.5" />
+              COMPARE NOW
+            </button>
           )}
           <button
             type="button"
             onClick={() => setCompareList([])}
             data-ocid="vehicles.cancel_button"
-            className="text-white/50 hover:text-white text-xs underline underline-offset-2 transition-colors"
+            className="font-orbitron text-[10px] underline underline-offset-2 transition-colors"
+            style={{ color: "rgba(240,255,248,0.4)" }}
           >
             Clear
           </button>

@@ -76,6 +76,15 @@ export default {
           "dark-card": "oklch(0.15 0.01 145)",
           gray: "oklch(0.5 0.01 145)",
           "light-gray": "oklch(0.95 0.005 145)",
+          /* Royal Gold tokens */
+          gold: "oklch(0.72 0.09 80)",
+          "gold-bright": "oklch(0.82 0.12 80)",
+          "gold-dim": "oklch(0.52 0.09 70)",
+          "gold-shimmer": "oklch(0.92 0.10 88)",
+          "gold-dark": "oklch(0.07 0.005 70)",
+          "gold-card": "oklch(0.09 0.005 70)",
+          "gold-alt": "oklch(0.08 0.004 70)",
+          cream: "oklch(0.95 0.02 85)",
         },
       },
       fontFamily: {
@@ -94,6 +103,9 @@ export default {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
         "green-glow": "0 0 30px oklch(0.62 0.19 155 / 0.3)",
         "green-glow-sm": "0 0 15px oklch(0.62 0.19 155 / 0.2)",
+        "gold-glow": "0 0 30px oklch(0.72 0.09 80 / 0.35)",
+        "gold-glow-sm": "0 0 20px oklch(0.72 0.09 80 / 0.2)",
+        "gold-glow-lg": "0 0 60px oklch(0.72 0.09 80 / 0.25), 0 8px 40px rgba(0,0,0,0.4)",
         "card-hover": "0 8px 30px rgba(0,0,0,0.12)",
       },
       keyframes: {
@@ -117,6 +129,10 @@ export default {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-8px)" },
         },
+        "gold-shimmer": {
+          "0%": { backgroundPosition: "200% center" },
+          "100%": { backgroundPosition: "-200% center" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -124,6 +140,7 @@ export default {
         "fade-in": "fade-in 0.6s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
         "float": "float 3s ease-in-out infinite",
+        "gold-shimmer": "gold-shimmer 4s linear infinite",
       },
     },
   },

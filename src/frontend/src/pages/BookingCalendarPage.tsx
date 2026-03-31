@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddAppointmentBooking } from "@/hooks/useQueries";
+import { saveLead } from "@/lib/supabase";
 import {
   CheckCircle2,
   ChevronLeft,
@@ -171,6 +172,13 @@ export default function BookingCalendarPage() {
       ]
         .filter(Boolean)
         .join("\n");
+      saveLead({
+        form_type: "booking",
+        name: form.name,
+        phone: form.phone,
+        vehicle_interest: form.vehicle || "Test Drive",
+        message: `Date: ${selectedDateStr}, Time: ${selectedTime}. ${form.notes || ""}`,
+      }).catch(() => {});
       window.open(
         `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
         "_blank",

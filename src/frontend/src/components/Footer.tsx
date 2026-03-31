@@ -1,9 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useAddNewsletterSubscriber } from "@/hooks/useQueries";
 import { Link } from "@tanstack/react-router";
 import {
-  Clock,
   Facebook,
   Instagram,
   Mail,
@@ -24,7 +21,6 @@ const quickLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-// WhatsApp SVG icon
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -48,7 +44,7 @@ export default function Footer() {
     if (!email) return;
     try {
       await subscribeMutation.mutateAsync({ email });
-      toast.success("Successfully subscribed to our newsletter!");
+      toast.success("Successfully subscribed!");
       setEmail("");
     } catch {
       toast.error("Failed to subscribe. Please try again.");
@@ -56,75 +52,155 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-brand-dark border-t border-white/10">
+    <footer style={{ background: "#000", borderTop: "none" }}>
+      {/* Neon pulse line at top */}
+      <div className="neon-line" />
+
+      {/* Holographic stats row */}
+      <div
+        style={{
+          background: "rgba(0,255,178,0.03)",
+          borderBottom: "1px solid rgba(0,255,178,0.08)",
+        }}
+      >
+        <div className="container mx-auto px-4 lg:px-6 py-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { value: "8+", label: "EV Brands" },
+              { value: "1100+", label: "Happy Customers" },
+              { value: "50+", label: "Vehicles" },
+              { value: "20+", label: "Dealer Network" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <div
+                  className="font-bebas text-4xl"
+                  style={{
+                    color: "#00FFB2",
+                    textShadow: "0 0 20px rgba(0,255,178,0.4)",
+                  }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  className="text-xs uppercase tracking-wider mt-0.5"
+                  style={{
+                    color: "rgba(240,255,248,0.4)",
+                    fontFamily: "'Orbitron', sans-serif",
+                    fontSize: "9px",
+                  }}
+                >
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main footer grid */}
       <div className="container mx-auto px-4 lg:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div className="space-y-4">
-            <Link to="/">
-              <img
-                src="/assets/uploads/JSR_LOGO-2.png"
-                alt="JSR Electric Vehicles"
-                className="h-10 w-auto object-contain"
-              />
+          {/* Brand column */}
+          <div className="space-y-5">
+            <Link to="/" className="flex items-center gap-2">
+              <span
+                className="font-orbitron font-black"
+                style={{
+                  fontSize: "32px",
+                  color: "#00FFB2",
+                  textShadow: "0 0 30px #00FFB2",
+                  letterSpacing: "2px",
+                }}
+              >
+                ⚡JSR
+              </span>
             </Link>
-            <p className="text-white/60 text-sm leading-relaxed">
-              Drive the Future — Go Electric. Your trusted multi-brand EV
-              showroom &amp; conversion experts in Telangana.
+            <img
+              src="/assets/uploads/JSR_LOGO-2.png"
+              alt="JSR Electric Vehicles"
+              className="h-14 w-auto object-contain opacity-80"
+            />
+            <p
+              style={{
+                color: "rgba(240,255,248,0.45)",
+                fontSize: "13px",
+                lineHeight: "1.7",
+                fontFamily: "'Space Grotesk', sans-serif",
+              }}
+            >
+              Drive the Future — Go Electric. Telangana's most advanced
+              multi-brand EV dealership.
             </p>
-            <div className="flex items-center gap-3 pt-2">
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-green flex items-center justify-center transition-colors"
-              >
-                <Facebook className="h-4 w-4 text-white" />
-              </a>
-              <a
-                href="https://instagram.com/jsrgreenmotors"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram @jsrgreenmotors"
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-green flex items-center justify-center transition-colors"
-              >
-                <Instagram className="h-4 w-4 text-white" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="YouTube"
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-brand-green flex items-center justify-center transition-colors"
-              >
-                <Youtube className="h-4 w-4 text-white" />
-              </a>
-              {/* WhatsApp icon */}
-              <a
-                href="https://wa.me/919948955517?text=Hello%20JSR%20Electric%20Vehicles%2C%20I%20want%20information%20about%20EV%20vehicles."
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="WhatsApp"
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#25D366] flex items-center justify-center transition-colors"
-              >
-                <WhatsAppIcon className="h-4 w-4 text-white" />
-              </a>
+            <div className="flex items-center gap-3 pt-1">
+              {[
+                {
+                  href: "https://facebook.com",
+                  icon: <Facebook className="h-4 w-4" />,
+                  label: "Facebook",
+                },
+                {
+                  href: "https://instagram.com/jsrgreenmotors",
+                  icon: <Instagram className="h-4 w-4" />,
+                  label: "Instagram",
+                },
+                {
+                  href: "https://youtube.com",
+                  icon: <Youtube className="h-4 w-4" />,
+                  label: "YouTube",
+                },
+                {
+                  href: "https://wa.me/919948955517",
+                  icon: <WhatsAppIcon className="h-4 w-4" />,
+                  label: "WhatsApp",
+                },
+              ].map(({ href, icon, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200"
+                  style={{
+                    background: "rgba(0,255,178,0.05)",
+                    border: "1px solid rgba(0,255,178,0.15)",
+                    color: "rgba(240,255,248,0.6)",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.background =
+                      "rgba(0,255,178,0.15)";
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
+                      "rgba(0,255,178,0.5)";
+                    (e.currentTarget as HTMLAnchorElement).style.color =
+                      "#00FFB2";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLAnchorElement).style.background =
+                      "rgba(0,255,178,0.05)";
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor =
+                      "rgba(0,255,178,0.15)";
+                    (e.currentTarget as HTMLAnchorElement).style.color =
+                      "rgba(240,255,248,0.6)";
+                  }}
+                >
+                  {icon}
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Navigation */}
           <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-              Quick Links
+            <h3
+              className="font-orbitron text-xs uppercase tracking-widest mb-5"
+              style={{ color: "#00FFB2", letterSpacing: "0.2em" }}
+            >
+              Navigation
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    className="text-white/60 hover:text-brand-green text-sm transition-colors"
-                  >
+                  <Link to={link.href} className="terminal-link text-sm">
                     {link.label}
                   </Link>
                 </li>
@@ -132,129 +208,180 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Services */}
           <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-              Contact Info
+            <h3
+              className="font-orbitron text-xs uppercase tracking-widest mb-5"
+              style={{ color: "#00FFB2", letterSpacing: "0.2em" }}
+            >
+              Services
             </h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-4 w-4 text-brand-green mt-0.5 shrink-0" />
-                <span className="text-white/60 text-sm">
-                  Suryapet road, beside Kashinadam function hall,
-                  <br />
-                  Kodad, Suryapet dist, Telangana-508206
-                </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-brand-green shrink-0" />
-                <a
-                  href="tel:+919948955517"
-                  className="text-white/60 hover:text-brand-green text-sm transition-colors"
-                >
-                  +91 9948955517
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-brand-green shrink-0" />
-                <a
-                  href="mailto:jsrgreenmotors5399@gmail.com"
-                  className="text-white/60 hover:text-brand-green text-sm transition-colors"
-                >
-                  jsrgreenmotors5399@gmail.com
-                </a>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="h-4 w-4 text-brand-green mt-0.5 shrink-0" />
-                <span className="text-white/60 text-sm">
-                  Mon–Sat: 9AM–7PM
-                  <br />
-                  Sun: 10AM–5PM
-                </span>
-              </li>
+            <ul className="space-y-1">
+              {[
+                { href: "/vehicles", label: "EV Sales" },
+                { href: "/services", label: "Service & Repair" },
+                { href: "/conversions", label: "EV Conversion" },
+                { href: "/franchise", label: "Franchise" },
+                { href: "/booking", label: "Book Test Ride" },
+                { href: "/compare", label: "Compare Vehicles" },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link to={item.href} className="terminal-link text-sm">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-              Stay Updated
-            </h3>
-            <p className="text-white/60 text-sm mb-4">
-              Get the latest EV news, offers &amp; updates from JSR Electric
-              Vehicles.
-            </p>
+          {/* Contact + Newsletter */}
+          <div className="space-y-5">
+            <div>
+              <h3
+                className="font-orbitron text-xs uppercase tracking-widest mb-4"
+                style={{ color: "#00FFB2", letterSpacing: "0.2em" }}
+              >
+                Contact
+              </h3>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-2">
+                  <MapPin
+                    className="h-4 w-4 mt-0.5 shrink-0"
+                    style={{ color: "#00FFB2" }}
+                  />
+                  <span
+                    style={{
+                      color: "rgba(240,255,248,0.5)",
+                      fontSize: "12px",
+                      lineHeight: "1.6",
+                    }}
+                  >
+                    Kodad, Suryapet Dist, Telangana–508206
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Phone
+                    className="h-4 w-4 shrink-0"
+                    style={{ color: "#00FFB2" }}
+                  />
+                  <a
+                    href="tel:+919948955517"
+                    style={{ color: "rgba(240,255,248,0.5)", fontSize: "12px" }}
+                    className="hover:text-[#00FFB2] transition-colors"
+                  >
+                    +91 9948955517
+                  </a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail
+                    className="h-4 w-4 shrink-0"
+                    style={{ color: "#00FFB2" }}
+                  />
+                  <a
+                    href="mailto:jsrgreenmotors5399@gmail.com"
+                    style={{ color: "rgba(240,255,248,0.5)", fontSize: "12px" }}
+                    className="hover:text-[#00FFB2] transition-colors"
+                  >
+                    jsrgreenmotors5399@gmail.com
+                  </a>
+                </li>
+              </ul>
+            </div>
+            {/* Newsletter */}
             <form onSubmit={handleSubscribe} className="space-y-2">
-              <Input
+              <p
+                style={{
+                  color: "rgba(240,255,248,0.4)",
+                  fontSize: "11px",
+                  fontFamily: "'Orbitron', sans-serif",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                STAY UPDATED
+              </p>
+              <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-brand-green focus:ring-brand-green"
+                className="w-full px-3 py-2 rounded text-sm"
+                style={{
+                  background: "rgba(0,255,178,0.04)",
+                  border: "1px solid rgba(0,255,178,0.2)",
+                  color: "#F0FFF8",
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  outline: "none",
+                }}
               />
-              <Button
+              <button
                 type="submit"
                 disabled={subscribeMutation.isPending}
-                className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+                className="btn-neon w-full py-2 rounded text-xs"
               >
-                {subscribeMutation.isPending ? "Subscribing..." : "Subscribe"}
-              </Button>
+                {subscribeMutation.isPending ? "..." : "SUBSCRIBE"}
+              </button>
             </form>
           </div>
         </div>
 
-        {/* Business Information Block */}
-        <div className="border-t border-white/10 mt-10 pt-6 pb-4">
-          <p className="text-white/30 text-xs text-center leading-relaxed">
-            <span className="font-medium text-white/40">Company:</span> JSR
-            Electric Vehicles
-            <span className="mx-2 text-white/20">|</span>
-            <span className="font-medium text-white/40">GST:</span>{" "}
-            36DXBPP2989H1Z9
-            <span className="mx-2 text-white/20">|</span>
-            <span className="font-medium text-white/40">Instagram:</span>{" "}
+        {/* Business info */}
+        <div
+          className="mt-10 pt-6 pb-2"
+          style={{ borderTop: "1px solid rgba(0,255,178,0.08)" }}
+        >
+          <p
+            style={{
+              color: "rgba(240,255,248,0.25)",
+              fontSize: "11px",
+              textAlign: "center",
+              lineHeight: "1.8",
+            }}
+          >
+            <span style={{ color: "rgba(240,255,248,0.4)" }}>GST:</span>{" "}
+            36DXBPP2989H1Z9 &nbsp;|&nbsp;
+            <span style={{ color: "rgba(240,255,248,0.4)" }}>Instagram:</span>{" "}
             <a
               href="https://instagram.com/jsrgreenmotors"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white/50 transition-colors"
+              className="hover:text-[#00FFB2] transition-colors"
             >
               @jsrgreenmotors
-            </a>
-            <span className="mx-2 text-white/20">|</span>
-            <span className="font-medium text-white/40">Reg. Address:</span>{" "}
-            Suryapet road, beside Kashinadam function hall, Kodad, Suryapet
-            dist, Telangana-508206
-            <span className="mx-2 text-white/20">|</span>
-            <span className="font-medium text-white/40">Ph:</span>{" "}
+            </a>{" "}
+            &nbsp;|&nbsp;
+            <span style={{ color: "rgba(240,255,248,0.4)" }}>Ph:</span>{" "}
             <a
               href="tel:+919948955517"
-              className="hover:text-white/50 transition-colors"
+              className="hover:text-[#00FFB2] transition-colors"
             >
               +91 9948955517
-            </a>
-            <span className="mx-2 text-white/20">|</span>
-            <span className="font-medium text-white/40">Email:</span>{" "}
-            <a
-              href="mailto:jsrgreenmotors5399@gmail.com"
-              className="hover:text-white/50 transition-colors"
-            >
-              jsrgreenmotors5399@gmail.com
             </a>
           </p>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/40 text-sm text-center sm:text-left">
-            © {currentYear} JSR Electric Vehicles. All rights reserved.
+        {/* Bottom bar */}
+        <div
+          className="pt-5 flex flex-col sm:flex-row items-center justify-between gap-3"
+          style={{ borderTop: "1px solid rgba(0,255,178,0.06)" }}
+        >
+          <p
+            className="font-orbitron text-xs tracking-widest"
+            style={{ color: "rgba(240,255,248,0.3)" }}
+          >
+            JSR ELECTRIC VEHICLES © {currentYear}{" "}
+            {" // ALL SYSTEMS OPERATIONAL "}{" "}
+            <span
+              className="status-dot inline-block w-2 h-2 rounded-full align-middle ml-1"
+              style={{ background: "#00FFB2" }}
+            />
           </p>
           <a
             href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-white/40 hover:text-white/60 text-sm transition-colors"
+            style={{ color: "rgba(240,255,248,0.25)", fontSize: "12px" }}
+            className="hover:text-[#00FFB2] transition-colors font-space"
           >
             Built with ❤️ using caffeine.ai
           </a>

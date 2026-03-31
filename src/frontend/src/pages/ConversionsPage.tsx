@@ -1,3 +1,4 @@
+import { PhoneOtpVerifier } from "@/components/PhoneOtpVerifier";
 import {
   Accordion,
   AccordionContent,
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAddConversionInquiry } from "@/hooks/useQueries";
+import { saveLead } from "@/lib/supabase";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -185,6 +187,7 @@ const costTable = [
 
 export default function ConversionsPage() {
   const [formSuccess, setFormSuccess] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const conversionMutation = useAddConversionInquiry();
   const [form, setForm] = useState({
     name: "",
@@ -208,11 +211,16 @@ export default function ConversionsPage() {
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === "phone") setOtpVerified(false);
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!otpVerified) {
+      toast.error("Please verify your phone number before submitting.");
+      return;
+    }
     try {
       await conversionMutation.mutateAsync(form);
       setFormSuccess(true);
@@ -230,6 +238,13 @@ export default function ConversionsPage() {
       ]
         .filter(Boolean)
         .join("\n");
+      saveLead({
+        form_type: "conversion",
+        name: form.name,
+        phone: form.phone,
+        vehicle_interest: form.bike_model || "",
+        message: `Location: ${form.location || "N/A"}, Monthly Petrol: ${form.petrol_expense || "N/A"}`,
+      }).catch(() => {});
       window.open(
         `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
         "_blank",
@@ -627,6 +642,12 @@ export default function ConversionsPage() {
                       required
                       data-ocid="conversion_form.phone_input"
                     />
+                    <PhoneOtpVerifier
+                      phone={form.phone}
+                      verified={otpVerified}
+                      onVerified={() => setOtpVerified(true)}
+                      onReset={() => setOtpVerified(false)}
+                    />
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -671,8 +692,8 @@ export default function ConversionsPage() {
                 </div>
                 <Button
                   type="submit"
-                  disabled={conversionMutation.isPending}
-                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold text-base py-6"
+                  disabled={conversionMutation.isPending || !otpVerified}
+                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-bold text-base py-6 disabled:opacity-60"
                   style={{ boxShadow: "0 0 20px oklch(0.62 0.19 155 / 0.3)" }}
                   data-ocid="conversion_form.submit_button"
                 >
@@ -685,6 +706,11 @@ export default function ConversionsPage() {
                     "Book Free Inspection"
                   )}
                 </Button>
+                {!otpVerified && (
+                  <p className="text-xs text-center text-muted-foreground">
+                    Verify your phone number to enable submission.
+                  </p>
+                )}
               </form>
             )}
           </div>

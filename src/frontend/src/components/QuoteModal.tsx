@@ -1,3 +1,4 @@
+import { PhoneOtpVerifier } from "@/components/PhoneOtpVerifier";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAddQuoteRequest } from "@/hooks/useQueries";
+import { saveLead } from "@/lib/supabase";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -33,21 +35,26 @@ export default function QuoteModal({
     message: "",
   });
   const [success, setSuccess] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const quoteMutation = useAddQuoteRequest();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    if (e.target.name === "phone") setOtpVerified(false);
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!otpVerified) {
+      toast.error("Please verify your phone number before submitting.");
+      return;
+    }
     try {
       await quoteMutation.mutateAsync(form);
       setSuccess(true);
       toast.success("Quote request submitted! Redirecting to WhatsApp...");
-      // Send enquiry details to WhatsApp +91 9948955517
       const msg = [
         "Hello JSR Electric Vehicles,",
         `Name: ${form.name}`,
@@ -60,6 +67,14 @@ export default function QuoteModal({
       ]
         .filter(Boolean)
         .join("\n");
+      saveLead({
+        form_type: "quote",
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        vehicle_interest: form.vehicle_interest,
+        message: form.message,
+      }).catch(() => {});
       window.open(
         `https://wa.me/919948955517?text=${encodeURIComponent(msg)}`,
         "_blank",
@@ -71,6 +86,7 @@ export default function QuoteModal({
 
   const handleClose = () => {
     setSuccess(false);
+    setOtpVerified(false);
     setForm({
       name: "",
       email: "",
@@ -148,6 +164,12 @@ export default function QuoteModal({
                 />
               </div>
             </div>
+            <PhoneOtpVerifier
+              phone={form.phone}
+              verified={otpVerified}
+              onVerified={() => setOtpVerified(true)}
+              onReset={() => setOtpVerified(false)}
+            />
             <div className="space-y-1.5">
               <Label htmlFor="quote-vehicle">Vehicle Interest</Label>
               <Input
@@ -171,8 +193,8 @@ export default function QuoteModal({
             </div>
             <Button
               type="submit"
-              disabled={quoteMutation.isPending}
-              className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+              disabled={quoteMutation.isPending || !otpVerified}
+              className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold disabled:opacity-60"
             >
               {quoteMutation.isPending ? (
                 <>
@@ -183,6 +205,11 @@ export default function QuoteModal({
                 "Submit Request"
               )}
             </Button>
+            {!otpVerified && (
+              <p className="text-xs text-center text-muted-foreground">
+                Verify your phone number to enable submission.
+              </p>
+            )}
           </form>
         )}
       </DialogContent>

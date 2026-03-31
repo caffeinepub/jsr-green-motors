@@ -361,130 +361,532 @@ export default function HomePage() {
 
   return (
     <main className="pb-16 md:pb-0">
-      {/* Hero Section */}
-      <section className="relative min-h-[100svh] flex items-center overflow-hidden noise-overlay">
-        {/* Background image */}
+      {/* ============================================
+            CYBERPUNK HERO SECTION
+        ============================================ */}
+      <section
+        className="relative min-h-[100svh] flex items-center overflow-hidden"
+        style={{ background: "#000" }}
+      >
+        {/* Atmospheric gradient orbs */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{
-            backgroundImage:
-              "url('/assets/generated/hero-ev-banner.dim_1600x700.jpg')",
-          }}
-        />
-        {/* Cinematic overlay */}
-        <div className="hero-overlay absolute inset-0 z-[1]" />
-        {/* Green edge-light accent */}
-        <div
-          className="absolute inset-y-0 right-0 w-1/3 z-[1] pointer-events-none"
+          className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse 80% 100% at 100% 50%, oklch(0.62 0.19 155 / 0.07) 0%, transparent 70%)",
+              "radial-gradient(ellipse 60% 80% at 15% 50%, rgba(0,51,32,0.5) 0%, transparent 70%), radial-gradient(ellipse 50% 70% at 85% 50%, rgba(255,77,0,0.08) 0%, transparent 70%)",
           }}
         />
 
-        <div className="relative z-10 container mx-auto px-4 lg:px-6 pt-24 pb-16">
-          <div className="max-w-3xl">
-            {/* Animated badge */}
-            <div className="hero-badge-animate inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-brand-green/30 bg-brand-green/10 backdrop-blur-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse" />
-              <span className="text-brand-green text-xs font-semibold uppercase tracking-[0.15em]">
-                Telangana's #1 EV Specialist
-              </span>
+        {/* Tunnel rings */}
+        {["120px", "300px", "480px", "660px", "840px"].map((size, i) => (
+          <div
+            key={size}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <div
+              style={{
+                width: size,
+                height: ["70px", "180px", "290px", "400px", "510px"][i],
+                border: "1px solid rgba(0,255,178,0.07)",
+                borderRadius: "50%",
+                transform: "rotateX(75deg)",
+                animation: `tunnel-zoom ${3 + i * 0.5}s linear ${i * 0.6}s infinite`,
+                position: "absolute",
+              }}
+            />
+          </div>
+        ))}
+
+        {/* Particles */}
+        {(
+          [
+            {
+              w: "2px",
+              h: "2px",
+              l: "12%",
+              t: "25%",
+              dur: "10s",
+              del: "0s",
+              drift: "20px",
+              neon: false,
+            },
+            {
+              w: "3px",
+              h: "3px",
+              l: "28%",
+              t: "60%",
+              dur: "14s",
+              del: "1s",
+              drift: "-30px",
+              neon: true,
+            },
+            {
+              w: "1.5px",
+              h: "1.5px",
+              l: "45%",
+              t: "15%",
+              dur: "8s",
+              del: "2s",
+              drift: "10px",
+              neon: false,
+            },
+            {
+              w: "2px",
+              h: "2px",
+              l: "62%",
+              t: "75%",
+              dur: "12s",
+              del: "0.5s",
+              drift: "-20px",
+              neon: false,
+            },
+            {
+              w: "3px",
+              h: "3px",
+              l: "78%",
+              t: "40%",
+              dur: "9s",
+              del: "3s",
+              drift: "40px",
+              neon: true,
+            },
+            {
+              w: "1.5px",
+              h: "1.5px",
+              l: "5%",
+              t: "80%",
+              dur: "16s",
+              del: "1.5s",
+              drift: "-10px",
+              neon: false,
+            },
+            {
+              w: "2px",
+              h: "2px",
+              l: "35%",
+              t: "45%",
+              dur: "11s",
+              del: "4s",
+              drift: "25px",
+              neon: false,
+            },
+            {
+              w: "2.5px",
+              h: "2.5px",
+              l: "88%",
+              t: "20%",
+              dur: "13s",
+              del: "2.5s",
+              drift: "-35px",
+              neon: true,
+            },
+            {
+              w: "1px",
+              h: "1px",
+              l: "55%",
+              t: "90%",
+              dur: "7s",
+              del: "0.2s",
+              drift: "15px",
+              neon: false,
+            },
+            {
+              w: "2px",
+              h: "2px",
+              l: "72%",
+              t: "55%",
+              dur: "15s",
+              del: "3.5s",
+              drift: "-25px",
+              neon: false,
+            },
+            {
+              w: "3px",
+              h: "3px",
+              l: "20%",
+              t: "35%",
+              dur: "10s",
+              del: "1s",
+              drift: "30px",
+              neon: true,
+            },
+            {
+              w: "1.5px",
+              h: "1.5px",
+              l: "93%",
+              t: "68%",
+              dur: "12s",
+              del: "5s",
+              drift: "-15px",
+              neon: false,
+            },
+          ] as const
+        ).map((p) => (
+          <div
+            key={p.l + p.t}
+            className="absolute rounded-full pointer-events-none"
+            style={
+              {
+                width: p.w,
+                height: p.h,
+                background: p.neon ? "#00FFB2" : "rgba(255,255,255,0.6)",
+                left: p.l,
+                top: p.t,
+                animation: `particle-float ${p.dur} linear ${p.del} infinite`,
+                "--drift": p.drift,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+
+        {/* Center SVG scooter + platform rings */}
+        <div
+          className="absolute right-[5%] md:right-[8%] top-1/2 hidden md:block pointer-events-none"
+          style={{
+            transform: "translateY(-50%)",
+            width: "38%",
+            maxWidth: "480px",
+          }}
+        >
+          <div style={{ position: "relative", height: "400px" }}>
+            {/* Platform rings */}
+            {["120px", "240px", "360px"].map((size, r) => (
+              <div
+                key={size}
+                className="platform-ring"
+                style={{
+                  width: size,
+                  height: ["40px", "80px", "120px"][r],
+                  bottom: "60px",
+                  left: "50%",
+                  animationDelay: `${r}s`,
+                }}
+              />
+            ))}
+            {/* SVG scooter silhouette */}
+            <svg
+              viewBox="0 0 400 280"
+              aria-label="Electric scooter"
+              style={{
+                width: "100%",
+                filter:
+                  "drop-shadow(0 0 40px #00FFB2) drop-shadow(0 30px 60px rgba(0,255,178,0.3))",
+                animation: "particle-float 8s ease-in-out infinite",
+              }}
+            >
+              <title>JSR Electric Scooter</title>
+              <path
+                d="M280 160 L320 80 L350 80 L370 120 L360 160 Z"
+                fill="none"
+                stroke="#00FFB2"
+                strokeWidth="2"
+                opacity="0.9"
+              />
+              <path
+                d="M80 160 L280 160 L320 80 L200 60 L120 80 Z"
+                fill="rgba(0,255,178,0.05)"
+                stroke="#00FFB2"
+                strokeWidth="1.5"
+                opacity="0.8"
+              />
+              <line
+                x1="320"
+                y1="80"
+                x2="340"
+                y2="60"
+                stroke="#00FFB2"
+                strokeWidth="2"
+                opacity="0.7"
+              />
+              <line
+                x1="340"
+                y1="60"
+                x2="360"
+                y2="65"
+                stroke="#00FFB2"
+                strokeWidth="2"
+                opacity="0.7"
+              />
+              <rect
+                x="180"
+                y="55"
+                width="100"
+                height="18"
+                rx="9"
+                fill="rgba(0,255,178,0.1)"
+                stroke="#00FFB2"
+                strokeWidth="1"
+                opacity="0.9"
+              />
+              <circle
+                cx="340"
+                cy="185"
+                r="38"
+                fill="none"
+                stroke="#00FFB2"
+                strokeWidth="2"
+                opacity="0.9"
+              />
+              <circle
+                cx="340"
+                cy="185"
+                r="20"
+                fill="none"
+                stroke="#00FFB2"
+                strokeWidth="1"
+                opacity="0.5"
+              />
+              <circle cx="340" cy="185" r="4" fill="#00FFB2" opacity="0.8" />
+              <circle
+                cx="100"
+                cy="185"
+                r="38"
+                fill="none"
+                stroke="#00FFB2"
+                strokeWidth="2"
+                opacity="0.9"
+              />
+              <circle
+                cx="100"
+                cy="185"
+                r="20"
+                fill="none"
+                stroke="#00FFB2"
+                strokeWidth="1"
+                opacity="0.5"
+              />
+              <circle cx="100" cy="185" r="4" fill="#00FFB2" opacity="0.8" />
+              <line
+                x1="100"
+                y1="223"
+                x2="340"
+                y2="223"
+                stroke="#00FFB2"
+                strokeWidth="4"
+                opacity="0.25"
+              />
+              <ellipse
+                cx="362"
+                cy="130"
+                rx="10"
+                ry="8"
+                fill="#00FFB2"
+                opacity="0.6"
+              />
+            </svg>
+          </div>
+
+          {/* HUD data cards */}
+          <div className="absolute" style={{ top: "20px", left: "-30px" }}>
+            <div
+              className="hud-card hud-glitch px-3 py-2 rounded"
+              style={{ minWidth: "110px" }}
+            >
+              <div
+                style={{
+                  color: "rgba(0,255,178,0.5)",
+                  fontFamily: "Orbitron, sans-serif",
+                  fontSize: "8px",
+                  letterSpacing: "2px",
+                }}
+              >
+                RANGE
+              </div>
+              <div
+                style={{
+                  color: "#00FFB2",
+                  fontFamily: "Bebas Neue, sans-serif",
+                  fontSize: "22px",
+                  lineHeight: "1",
+                }}
+              >
+                162 KM
+              </div>
+            </div>
+          </div>
+          <div className="absolute" style={{ top: "120px", right: "-20px" }}>
+            <div
+              className="hud-card hud-glitch px-3 py-2 rounded"
+              style={{ minWidth: "110px", animationDelay: "2s" }}
+            >
+              <div
+                style={{
+                  color: "rgba(0,255,178,0.5)",
+                  fontFamily: "Orbitron, sans-serif",
+                  fontSize: "8px",
+                  letterSpacing: "2px",
+                }}
+              >
+                SPEED
+              </div>
+              <div
+                style={{
+                  color: "#00FFB2",
+                  fontFamily: "Bebas Neue, sans-serif",
+                  fontSize: "22px",
+                  lineHeight: "1",
+                }}
+              >
+                95 KM/H
+              </div>
+            </div>
+          </div>
+          <div className="absolute" style={{ bottom: "100px", left: "-10px" }}>
+            <div
+              className="hud-card hud-glitch px-3 py-2 rounded"
+              style={{ minWidth: "110px", animationDelay: "4s" }}
+            >
+              <div
+                style={{
+                  color: "rgba(0,255,178,0.5)",
+                  fontFamily: "Orbitron, sans-serif",
+                  fontSize: "8px",
+                  letterSpacing: "2px",
+                }}
+              >
+                POWER
+              </div>
+              <div
+                style={{
+                  color: "#00FFB2",
+                  fontFamily: "Bebas Neue, sans-serif",
+                  fontSize: "22px",
+                  lineHeight: "1",
+                }}
+              >
+                6.37 KWH
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* LEFT TEXT */}
+        <div
+          className="relative z-10 container mx-auto px-4 lg:px-6"
+          style={{
+            minHeight: "100svh",
+            display: "flex",
+            alignItems: "center",
+            paddingTop: "7rem",
+            paddingBottom: "6rem",
+          }}
+        >
+          <div className="max-w-2xl">
+            {/* Micro label */}
+            <div
+              className="hero-badge-animate mb-5 font-orbitron"
+              style={{
+                color: "#00FFB2",
+                fontSize: "11px",
+                letterSpacing: "6px",
+              }}
+            >
+              {"NEXT GEN MOBILITY // 2026"}{" "}
+              <span className="blink">&#9608;</span>
             </div>
 
-            {/* Staggered headline */}
-            <h1 className="font-display font-bold text-white leading-[1.05] mb-6">
-              <span className="hero-title-line1 block text-3xl md:text-5xl lg:text-6xl">
-                Complete Electric Mobility Solutions —
+            {/* H1 */}
+            <h1
+              className="font-orbitron font-black mb-6"
+              style={{ lineHeight: "0.9", letterSpacing: "-1px" }}
+            >
+              <span
+                className="hero-title-line1 block"
+                style={{
+                  fontSize: "clamp(44px, 7vw, 100px)",
+                  color: "#F0FFF8",
+                }}
+              >
+                THE FUTURE
               </span>
-              <span className="hero-title-line2 block text-3xl md:text-5xl lg:text-6xl">
-                <span
-                  className="relative inline-block"
-                  style={{
-                    color: "oklch(0.62 0.19 155)",
-                    textShadow: "0 0 40px oklch(0.62 0.19 155 / 0.45)",
-                  }}
-                >
-                  Sales, Service &amp; EV Conversion
-                </span>{" "}
-                <span className="text-white/90">Under One Roof</span>
+              <span
+                className="hero-title-line2 block"
+                style={{
+                  fontSize: "clamp(44px, 7vw, 100px)",
+                  color: "#F0FFF8",
+                }}
+              >
+                RUNS
+              </span>
+              <span
+                className="hero-title-line2 block"
+                style={{
+                  fontSize: "clamp(44px, 7vw, 100px)",
+                  color: "#00FFB2",
+                  textShadow: "0 0 60px rgba(0,255,178,0.5)",
+                }}
+              >
+                ELECTRIC.
               </span>
             </h1>
 
-            <p className="hero-sub-animate text-lg md:text-xl text-white/70 mb-8 max-w-2xl leading-relaxed">
-              Multi-Brand Electric Scooters &amp; Bikes | Petrol to Electric
-              Conversion | Franchise Opportunities
+            {/* Subtext */}
+            <p
+              className="hero-sub-animate mb-8 font-space"
+              style={{
+                fontSize: "15px",
+                color: "rgba(240,255,248,0.5)",
+                maxWidth: "520px",
+                lineHeight: "1.7",
+              }}
+            >
+              JSR Electric Vehicles — Telangana&#39;s most advanced EV
+              dealership. 8+ brands. 50+ models. Zero compromises.
             </p>
 
-            {/* CTA buttons with clear hierarchy */}
-            <div className="hero-cta-animate flex flex-wrap gap-3 mb-6">
-              {/* PRIMARY: solid green */}
-              <button
-                type="button"
-                onClick={scrollToLeadForm}
-                className="inline-flex items-center justify-center gap-2 bg-brand-green hover:bg-brand-green/90 active:scale-95 text-white font-semibold px-7 py-3 text-base transition-all duration-200 hover:scale-[1.03] rounded-md"
-                style={{
-                  boxShadow:
-                    "0 0 28px oklch(0.62 0.19 155 / 0.45), 0 4px 12px rgba(0,0,0,0.3)",
-                }}
-                data-ocid="hero.primary_button"
-              >
-                Book Free Test Ride <ChevronRight className="h-4 w-4" />
-              </button>
-              {/* SECONDARY: outlined white */}
+            {/* CTA buttons */}
+            <div className="hero-cta-animate flex flex-wrap gap-4 mb-10">
               <Link to="/vehicles">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 active:scale-95 px-7 py-3 text-base bg-white/5 backdrop-blur-sm transition-all duration-200"
+                <button
+                  type="button"
+                  className="btn-neon px-7 py-3 rounded-full text-sm"
+                  data-ocid="hero.primary_button"
+                >
+                  EXPLORE VEHICLES &#8594;
+                </button>
+              </Link>
+              <Link to="/booking">
+                <button
+                  type="button"
+                  className="btn-ghost-neon px-7 py-3 rounded-full text-sm"
                   data-ocid="hero.secondary_button"
                 >
-                  Get Best Price
-                </Button>
-              </Link>
-              {/* TERTIARY: text link with arrow */}
-              <Link
-                to="/conversions"
-                className="inline-flex items-center gap-1.5 text-white/75 hover:text-white text-base font-medium transition-colors px-2 py-3"
-                data-ocid="hero.link"
-              >
-                Convert to Electric <ArrowRight className="h-4 w-4" />
+                  BOOK TEST RIDE
+                </button>
               </Link>
             </div>
 
-            {/* Trust Strip */}
-            <div className="hero-cta-animate flex flex-wrap gap-x-5 gap-y-2 mt-2 mb-6">
-              {[
-                "20+ Dealer Network",
-                "Certified EV Technicians",
-                "Dedicated Service Support",
-              ].map((item) => (
-                <span
-                  key={item}
-                  className="flex items-center gap-1.5 text-white/75 text-sm"
-                >
-                  <Check className="h-3.5 w-3.5 text-brand-green shrink-0" />
-                  {item}
-                </span>
-              ))}
-            </div>
-
-            {/* Stats row — 4 items */}
-            <div className="hero-stats-animate flex flex-wrap gap-8 mt-10 pt-8 border-t border-white/15">
-              {[
-                { value: "20+", label: "Brands" },
-                { value: "500+", label: "Happy Customers" },
-                { value: "5+", label: "Years Experience" },
-                { value: "20+", label: "Dealers" },
-              ].map((stat) => (
+            {/* Stats row */}
+            <div
+              className="hero-stats-animate flex flex-wrap gap-8 pt-6"
+              style={{ borderTop: "1px solid rgba(0,255,178,0.1)" }}
+            >
+              {(
+                [
+                  { value: "8+", label: "EV Brands" },
+                  { value: "1100+", label: "Customers" },
+                  { value: "5+", label: "Years" },
+                  { value: "20+", label: "Dealers" },
+                ] as const
+              ).map((stat) => (
                 <div key={stat.label}>
                   <div
-                    className="text-3xl font-black font-display"
-                    style={{ color: "oklch(0.72 0.19 155)" }}
+                    className="font-bebas text-3xl"
+                    style={{
+                      color: "#00FFB2",
+                      textShadow: "0 0 20px rgba(0,255,178,0.4)",
+                    }}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-white/50 text-xs uppercase tracking-wider mt-0.5">
+                  <div
+                    className="font-orbitron mt-0.5"
+                    style={{
+                      color: "rgba(240,255,248,0.35)",
+                      fontSize: "9px",
+                      letterSpacing: "2px",
+                    }}
+                  >
                     {stat.label}
                   </div>
                 </div>
@@ -493,11 +895,75 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2">
-          <div className="w-px h-10 bg-gradient-to-b from-transparent via-white/30 to-white/0" />
-          <div className="text-white/30 text-[10px] uppercase tracking-[0.2em]">
-            Scroll
+        {/* Scroll indicator */}
+        <div
+          className="absolute right-6 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center gap-2"
+          style={{ zIndex: 10 }}
+        >
+          <div
+            className="font-orbitron"
+            style={{
+              color: "rgba(0,255,178,0.4)",
+              writingMode: "vertical-rl",
+              fontSize: "9px",
+              letterSpacing: "3px",
+            }}
+          >
+            SCROLL TO EXPLORE
+          </div>
+          <div
+            style={{
+              width: "1px",
+              height: "40px",
+              background:
+                "linear-gradient(to bottom, rgba(0,255,178,0.4), transparent)",
+            }}
+          />
+          <div
+            className="scroll-dot w-1.5 h-1.5 rounded-full"
+            style={{ background: "#00FFB2" }}
+          />
+        </div>
+
+        {/* Stat ticker at bottom */}
+        <div
+          className="absolute bottom-0 left-0 right-0 overflow-hidden"
+          style={{
+            background: "rgba(0,255,178,0.04)",
+            borderTop: "1px solid rgba(0,255,178,0.1)",
+            padding: "10px 0",
+          }}
+        >
+          <div className="ticker-track">
+            {[0, 1].map((dupIdx) => (
+              <span key={dupIdx} className="inline-flex items-center">
+                {(
+                  [
+                    "⚡ 20+ BRANDS",
+                    "◈ 1100+ CUSTOMERS",
+                    "◎ 50 VEHICLES",
+                    "◆ 5+ YEARS",
+                    "▸ 8+ EV BRANDS",
+                    "⚡ 20 DEALERS ACROSS TELANGANA",
+                  ] as const
+                ).map((item) => (
+                  <span
+                    key={`${item}-${dupIdx}`}
+                    className="font-orbitron"
+                    style={{
+                      color: "#00FFB2",
+                      fontSize: "10px",
+                      letterSpacing: "2px",
+                      padding: "0 32px",
+                      borderRight: "1px solid rgba(0,255,178,0.2)",
+                      opacity: 0.8,
+                    }}
+                  >
+                    {item}
+                  </span>
+                ))}
+              </span>
+            ))}
           </div>
         </div>
       </section>
@@ -563,7 +1029,7 @@ export default function HomePage() {
                 <img
                   src="/assets/uploads/JSR_LOGO-2.png"
                   alt="JSR Electric Vehicles"
-                  className="h-10 w-auto object-contain opacity-80"
+                  className="h-16 w-auto object-contain opacity-90"
                 />
                 <span className="text-white/50 text-sm">
                   JSR Electric Vehicles

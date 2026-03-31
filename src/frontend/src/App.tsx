@@ -22,7 +22,7 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const SEED_KEY = "jsr_seeded_v5";
 
@@ -47,16 +47,91 @@ function SeedInitializer() {
   return null;
 }
 
-function RootLayout() {
+function CyberpunkEffects() {
+  const cursorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Custom cursor tracking
+    const onMouseMove = (e: MouseEvent) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.left = `${e.clientX}px`;
+        cursorRef.current.style.top = `${e.clientY}px`;
+      }
+    };
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+
+    // Page loader dismissal
+    const loader = document.getElementById("page-loader");
+    const timer = setTimeout(() => {
+      loader?.classList.add("hidden");
+    }, 1400);
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        }
+      },
+      { threshold: 0.12 },
+    );
+    const revealEls = document.querySelectorAll(".reveal-section");
+    for (const el of revealEls) observer.observe(el);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <>
+      {/* Page loader */}
+      <div id="page-loader">
+        <div className="loader-logo">
+          <span>J</span>
+          <span>S</span>
+          <span>R</span>
+        </div>
+        <div className="loader-line" />
+        <div
+          style={{
+            fontFamily: "Space Grotesk, sans-serif",
+            color: "rgba(0,255,178,0.5)",
+            fontSize: "12px",
+            letterSpacing: "4px",
+            marginTop: "8px",
+          }}
+        >
+          ELECTRIC VEHICLES
+        </div>
+      </div>
+
+      {/* Custom cursor */}
+      <div id="custom-cursor" ref={cursorRef}>
+        <div className="outer-ring" />
+        <div className="inner-dot" />
+        <div className="crosshair-h" />
+        <div className="crosshair-v" />
+      </div>
+    </>
+  );
+}
+
+function RootLayout() {
+  return (
+    <div className="noise-overlay">
+      <CyberpunkEffects />
       <SeedInitializer />
       <Navbar />
       <Outlet />
       <Footer />
       <WhatsAppButton />
       <Toaster richColors position="top-right" />
-    </>
+    </div>
   );
 }
 

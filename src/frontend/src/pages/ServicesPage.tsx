@@ -1,3 +1,4 @@
+import { PhoneOtpVerifier } from "@/components/PhoneOtpVerifier";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,6 +91,7 @@ const timeSlots = [
 
 export default function ServicesPage() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const bookingMutation = useAddAppointmentBooking();
   const [form, setForm] = useState({
     name: "",
@@ -108,11 +110,16 @@ export default function ServicesPage() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    if (e.target.name === "phone") setOtpVerified(false);
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!otpVerified) {
+      toast.error("Please verify your phone number before submitting.");
+      return;
+    }
     try {
       await bookingMutation.mutateAsync(form);
       setBookingSuccess(true);
@@ -277,6 +284,12 @@ export default function ServicesPage() {
                       onChange={handleChange}
                       required
                     />
+                    <PhoneOtpVerifier
+                      phone={form.phone}
+                      verified={otpVerified}
+                      onVerified={() => setOtpVerified(true)}
+                      onReset={() => setOtpVerified(false)}
+                    />
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -360,8 +373,8 @@ export default function ServicesPage() {
                 </div>
                 <Button
                   type="submit"
-                  disabled={bookingMutation.isPending}
-                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold"
+                  disabled={bookingMutation.isPending || !otpVerified}
+                  className="w-full bg-brand-green hover:bg-brand-green/90 text-white font-semibold disabled:opacity-60"
                 >
                   {bookingMutation.isPending ? (
                     <>
@@ -372,6 +385,11 @@ export default function ServicesPage() {
                     "Book Appointment"
                   )}
                 </Button>
+                {!otpVerified && (
+                  <p className="text-xs text-center text-muted-foreground">
+                    Verify your phone number to enable submission.
+                  </p>
+                )}
               </form>
             )}
           </div>
